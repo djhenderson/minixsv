@@ -7,6 +7,7 @@ Other parsers can be adapted by implementing an appropriate interface class
 --------------------------------------------------------------------
  The genxmlif generic XML interface package is
 
+ Copyright (c) 2017 by Doug Henderson
  Copyright (c) 2005-2015 by Roland Leuthe
 
  By obtaining, using, and/or copying this software and/or its
@@ -52,6 +53,14 @@ xmliftest.py
 
 HISTORY:
 =======
+
+Changes for Release (next release after 0.9.1)
+=========================
+
+- convert print statements to print functions
+- convert old style expect and raise to new style
+- ...
+
 
 Changes for Release 0.9.1
 =========================

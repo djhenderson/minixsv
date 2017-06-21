@@ -23,6 +23,7 @@ After successful validation minixsv provides the input XML tree with the followi
 --------------------------------------------------------------------
  The minixsv XML schema validator is
 
+ Copyright (c) 2017 by Doug Henderson
  Copyright (c) 2004-2015 by Roland Leuthe
 
  By obtaining, using, and/or copying this software and/or its
@@ -89,6 +90,14 @@ XMLSchema-instance.xsd
 
 HISTORY:
 =======
+
+Changes for Release (next release after 0.9.1)
+=========================
+
+- convert print statements to print functions
+- convert old style expect and raise to new style
+- ...
+
 
 Changes for Release 0.9.1
 =========================
