@@ -1,6 +1,6 @@
 Release Notes for genxmlif, Release 0.9.1
 
-genxmlif is a generic XML interface package 
+genxmlif is a generic XML interface package
 which currently uses minidom, elementtree or 4DOM as XML parser
 Other parsers can be adapted by implementing an appropriate interface class
 

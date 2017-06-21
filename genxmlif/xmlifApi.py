@@ -58,19 +58,19 @@ from xmlifUtils import processWhitespaceAction, NsNameTupleFactory, splitQName, 
 
 class XmlInterfaceBase:
     """XML interface base class.
-    
+
     All not implemented methods have to be overloaded by the derived class!!
     """
 
     def __init__(self, verbose, useCaching, processXInclude):
         """Constructor of class XmlInterfaceBase.
-        
+
         Input parameter:
             'verbose':         0 or 1: controls verbose print output for module genxmlif
             'useCaching':      0 or 1: controls usage of caching for module genxmlif
             'processXInclude': 0 or 1: controls XInclude processing during parsing
         """
-        
+
         self.verbose         = verbose
         self.useCaching      = useCaching
         self.processXInclude = processXInclude
@@ -82,7 +82,7 @@ class XmlInterfaceBase:
 
     def createXmlTree (self, namespace, xmlRootTagName, attributeDict={}, publicId=None, systemId=None):
         """Create a new XML TreeWrapper object (wrapper for DOM document or elementtree).
-        
+
         Input parameter:
             'namespace':      not yet handled (for future use)
             'xmlRootTagName': specifies the tag name of the root element
@@ -92,21 +92,21 @@ class XmlInterfaceBase:
         Returns the created XML tree wrapper object.
         Method has to be implemented by derived classes!
         """
-         
+
         raise NotImplementedError
 
 
     def parse (self, filePath, baseUrl="", ownerDoc=None):
         """Call the XML parser for 'file'.
-        
+
         Input parameter:
             'filePath': a file path or an URI
             'baseUrl':  if specified, it is used e.g. as base path for schema files referenced inside the XML file.
-            'ownerDoc': only used in case of 4DOM (forwarded to 4DOM parser). 
+            'ownerDoc': only used in case of 4DOM (forwarded to 4DOM parser).
         Returns the respective XML tree wrapper object for the parsed XML file.
         Method has to be implemented by derived classes!
         """
-        
+
         raise NotImplementedError
 
 
@@ -116,7 +116,7 @@ class XmlInterfaceBase:
         Input parameter:
             'text':     contains the XML string to be parsed
             'baseUrl':  if specified, it is used e.g. as base path for schema files referenced inside the XML string.
-            'ownerDoc': only used in case of 4DOM (forwarded to 4DOM parser). 
+            'ownerDoc': only used in case of 4DOM (forwarded to 4DOM parser).
         Returns the respective XML tree wrapper object for the parsed XML 'text' string.
         Method has to be implemented by derived classes!
         """
@@ -139,17 +139,17 @@ class XmlInterfaceBase:
             elementWrapperClass:  element wrapper class
         """
         self.elementWrapperClass = elementWrapperClass
-        
+
 
     def getXmlIfType (self):
         """Retrieve the type of the XML interface."""
         return self.xmlIfType
 
-        
+
     def getWellknownNamespaces (self):
         """Retrieve all wellknown namespaces."""
         return [("xml", XML_NAMESPACE), ("xmlns", XMLNS_NAMESPACE)]
-    
+
 
 ########################################
 # Tree wrapper API (interface class)
@@ -163,7 +163,7 @@ class XmlTreeWrapper:
 
     def __init__(self, xmlIf, tree, useCaching):
         """Constructor of wrapper class XmlTreeWrapper.
-        
+
         Input parameter:
             'xmlIf':      used XML interface class
             'tree':       DOM tree or elementtree which is wrapped by this object
@@ -176,9 +176,9 @@ class XmlTreeWrapper:
 
     def createElement (self, tupleOrLocalName, attributeDict=None, curNs=[]):
         """Create an ElementWrapper object.
-        
+
         Input parameter:
-            tupleOrLocalName: tag name of element node to be created 
+            tupleOrLocalName: tag name of element node to be created
                               (tuple of namespace and localName or only localName if no namespace is used)
             attributeDict:    attributes for this elements
             curNs:            namespaces for scope of this element
@@ -192,17 +192,17 @@ class XmlTreeWrapper:
     def cloneTree (self):
         """Creates a copy of a whole XML DOM tree."""
         rootElementWrapperCopy = self.getRootNode().cloneNode(deep=1)
-        treeWrapperCopy = self.__class__(self.xmlIf, 
-                                         self.__tree.xmlIfExtCloneTree(rootElementWrapperCopy.element), 
+        treeWrapperCopy = self.__class__(self.xmlIf,
+                                         self.__tree.xmlIfExtCloneTree(rootElementWrapperCopy.element),
                                          self.__useCaching)
         for elementWrapper in rootElementWrapperCopy.getIterator():
             elementWrapper.treeWrapper = treeWrapperCopy
         return treeWrapperCopy
-        
-    
+
+
     def getRootNode (self):
         """Retrieve the wrapper object of the root element of the contained XML tree.
-        
+
         Returns the ElementWrapper object of the root element.
         """
         return self.__tree.xmlIfExtGetRootNode().xmlIfExtElementWrapper
@@ -210,15 +210,15 @@ class XmlTreeWrapper:
 
     def getTree (self):
         """Retrieve the contained XML tree.
-        
+
         Returns the contained XML tree object (internal DOM tree wrapper or elementtree).
         """
         return self.__tree
 
-    
+
     def printTree (self, prettyPrint=0, printElementValue=1, encoding=None):
         """Return the string representation of the contained XML tree.
-        
+
         Input parameter:
             'prettyPrint':        aligns the columns of the attributes of childNodes
             'printElementValue':  controls if the lement values are printed or not.
@@ -247,14 +247,14 @@ class XmlTreeWrapper:
         """
         self.getRootNode().setExternalCacheUsage (used, deep=1)
 
-    
+
     def unlink (self):
         """Break circular references of the complete XML tree.
-        
+
         To be called if the XML tree is not longer used => garbage collection!
         """
         self.getRootNode().unlink()
-        
+
 
     def __str__ (self):
         """Return the string representation of the contained XML tree."""
@@ -275,7 +275,7 @@ class XmlElementWrapper:
 
     def __init__(self, element, treeWrapper, curNs=[], initAttrSeq=1):
         """Constructor of wrapper class XmlElementWrapper.
-        
+
         Input parameter:
             element:       XML element node which is wrapped by this object
             treeWrapper:   XML tree wrapper class the current element belongs to
@@ -285,7 +285,7 @@ class XmlElementWrapper:
         self.element.xmlIfExtElementWrapper = self
         self.treeWrapper                    = treeWrapper
         self.nodeUsedByExternalCache        = 0
-        
+
         if self.__useCaching():
             self.__childrenCache = {}
             self.__firstChildCache = {}
@@ -310,7 +310,7 @@ class XmlElementWrapper:
         if not self.isUsedByExternalCache():
             self.element.xmlIfExtUnlink()
 
-        
+
     def cloneNode (self, deep, cloneCallback=None):
         """Create a copy of the current element wrapper.
            The reference to the parent node is set to None!"""
@@ -331,8 +331,8 @@ class XmlElementWrapper:
                 childWrapperElementCopy.element.xmlIfExtSetParentNode(elementWrapperCopy.element)
                 elementWrapperCopy.element.xmlIfExtAppendChild(childWrapperElementCopy.element)
         return elementWrapperCopy
-    
-    
+
+
     def clearNodeCache (self):
         """Clear all caches used by this element wrapper which contains element wrapper references."""
         self.__clearChildrenCache()
@@ -342,8 +342,8 @@ class XmlElementWrapper:
         """Check if this node is used by an external cache.
            unlink commands are ignored if used by an external cache"""
         return self.nodeUsedByExternalCache
-    
-    
+
+
     def setExternalCacheUsage (self, used, deep=1):
         """Set external cache usage for this node and its children
            unlink commands are ignored if used by an external cache
@@ -356,15 +356,15 @@ class XmlElementWrapper:
         if deep:
             for childWrapper in self.getChildren():
                 childWrapper.setExternalCacheUsage (used, deep)
-        
+
 
 
     ##########################################################
     #  attributes of the current node can be accessed via key operator
-    
+
     def __getitem__(self, tupleOrAttrName):
         """Attributes of the contained element node can be accessed via key operator.
-        
+
         Input parameter:
             tupleOrAttrName: name of the attribute (tuple of namespace and attributeName or only attributeName)
         Returns the attribute value.
@@ -378,7 +378,7 @@ class XmlElementWrapper:
 
     def __setitem__(self, tupleOrAttrName, attributeValue):
         """Attributes of the contained element node can be accessed via key operator.
-        
+
         Input parameter:
             tupleOrAttrName: name of the attribute (tuple of namespace and attributeName or only attributeName)
             attributeValue:  attribute value to be set
@@ -390,7 +390,7 @@ class XmlElementWrapper:
 
     def getTagName (self):
         """Retrieve the (complete) tag name of the contained element node
-        
+
         Returns the (complete) tag name of the contained element node
         """
         return self.element.xmlIfExtGetTagName()
@@ -398,10 +398,10 @@ class XmlElementWrapper:
 
     def getLocalName (self):
         """Retrieve the local name (without namespace) of the contained element node
-        
+
         Returns the local name (without namespace) of the contained element node
         """
-        
+
         try:
             return self.__localNameCache
         except:
@@ -413,7 +413,7 @@ class XmlElementWrapper:
 
     def getNamespaceURI (self):
         """Retrieve the namespace URI of the contained element node
-        
+
         Returns the namespace URI of the contained element node (None if no namespace is used).
         """
         try:
@@ -421,13 +421,13 @@ class XmlElementWrapper:
         except:
             prefix = self.element.xmlIfExtGetNamespaceURI()
             if self.__useCaching():
-                self.__nsUriCache = prefix 
+                self.__nsUriCache = prefix
             return prefix
 
 
     def getNsName (self):
         """Retrieve a tuple (namespace, localName) of the contained element node
-        
+
         Returns a tuple (namespace, localName) of the contained element node (namespace is None if no namespace is used).
         """
         try:
@@ -449,7 +449,7 @@ class XmlElementWrapper:
 
     def getPrefix (self):
         """Retrieve the namespace prefix of the contained element node
-        
+
         Returns the namespace prefix of the contained element node (None if no namespace is used).
         """
         return self.getNsPrefix(self.getNsName())
@@ -464,7 +464,7 @@ class XmlElementWrapper:
 
     def printNode (self, indent="", deep=0, prettyPrint=0, attrMaxLengthDict={}, printElementValue=1, encoding=None):
         """Retrieve the textual representation of the contained element node.
-        
+
         Input parameter:
             indent:             indentation to be used for string representation
             deep:               0 or 1: controls if the child element nodes are also printed
@@ -480,7 +480,7 @@ class XmlElementWrapper:
 %(indent)s<%(qName)s%(attributeString)s>%(elementValueString)s\
 %(lf)s%(subTreeString)s\
 %(indent)s</%(qName)s>%(tailText)s%(lf)s'''
-        
+
         subTreeStringList = []
         tailText = ""
         addIndent = ""
@@ -495,7 +495,7 @@ class XmlElementWrapper:
             for childNode in self.getChildren():
                 subTreeStringList.append (childNode.printNode(indent + addIndent, deep, prettyPrint, childAttrMaxLengthDict, printElementValue))
             tailText = escapeCdata(self.element.xmlIfExtGetElementTailText(), encoding)
-        
+
         attributeStringList = []
 
         for attrName in self.getAttributeList():
@@ -550,7 +550,7 @@ class XmlElementWrapper:
 
     def getChildren (self, tagFilter=None):
         """Retrieve the ElementWrapper objects of the children element nodes.
-        
+
         Input parameter:
             tagFilter: retrieve only the children with this tag name ('*' or None returns all children)
         Returns all children of this element node which match 'tagFilter' (list)
@@ -559,7 +559,7 @@ class XmlElementWrapper:
             children = self.element.xmlIfExtGetChildren()
         elif tagFilter[1] == '*':
             # handle (namespace, '*')
-            children = filter(lambda child:child.xmlIfExtElementWrapper.getNamespaceURI() == tagFilter[0], 
+            children = filter(lambda child:child.xmlIfExtElementWrapper.getNamespaceURI() == tagFilter[0],
                               self.element.xmlIfExtGetChildren())
         else:
             nsNameFilter = NsNameTupleFactory(tagFilter)
@@ -575,7 +575,7 @@ class XmlElementWrapper:
 
     def getChildrenNS (self, namespaceURI, tagFilter=None):
         """Retrieve the ElementWrapper objects of the children element nodes using a namespace.
-        
+
         Input parameter:
             namespaceURI: the namespace URI of the children or None
             tagFilter:    retrieve only the children with this localName ('*' or None returns all children)
@@ -586,7 +586,7 @@ class XmlElementWrapper:
 
     def getChildrenWithKey (self, tagFilter=None, keyAttr=None, keyValue=None):
         """Retrieve the ElementWrapper objects of the children element nodes.
-        
+
         Input parameter:
             tagFilter: retrieve only the children with this tag name ('*' or None returns all children)
             keyAttr:   name of the key attribute
@@ -595,11 +595,11 @@ class XmlElementWrapper:
         """
         children = self.getChildren(tagFilter)
         return filter(lambda child:child[keyAttr]==keyValue, children)
-    
-    
+
+
     def getFirstChild (self, tagFilter=None):
         """Retrieve the ElementWrapper objects of the first child element node.
-        
+
         Input parameter:
             tagFilter: retrieve only the first child with this tag name ('*' or None: no filter)
         Returns the first child of this element node which match 'tagFilter'
@@ -609,7 +609,7 @@ class XmlElementWrapper:
             element = self.element.xmlIfExtGetFirstChild()
         elif tagFilter[1] == '*':
             # handle (namespace, '*')
-            children = filter(lambda child:child.xmlIfExtElementWrapper.getNamespaceURI() == tagFilter[0], 
+            children = filter(lambda child:child.xmlIfExtElementWrapper.getNamespaceURI() == tagFilter[0],
                               self.element.xmlIfExtGetChildren())
             try:
                 element = children[0]
@@ -632,7 +632,7 @@ class XmlElementWrapper:
 
     def getFirstChildNS (self, namespaceURI, tagFilter=None):
         """Retrieve the ElementWrapper objects of the first child element node using a namespace.
-        
+
         Input parameter:
             namespaceURI: the namespace URI of the children or None
             tagFilter:    retrieve only the first child with this localName ('*' or None: no filter)
@@ -644,7 +644,7 @@ class XmlElementWrapper:
 
     def getFirstChildWithKey (self, tagFilter=None, keyAttr=None, keyValue=None):
         """Retrieve the ElementWrapper objects of the children element nodes.
-        
+
         Input parameter:
             tagFilter: retrieve only the children with this tag name ('*' or None returns all children)
             keyAttr:   name of the key attribute
@@ -658,7 +658,7 @@ class XmlElementWrapper:
         else:
             return None
 
-    
+
     def getElementsByTagName (self, tagFilter=None):
         """Retrieve all descendant ElementWrapper object of current node whose tag name match 'tagFilter'.
 
@@ -668,10 +668,10 @@ class XmlElementWrapper:
         """
         if tagFilter in (None, '*', (None, '*'), (None, None)):
             descendants = self.element.xmlIfExtGetElementsByTagName()
-            
+
         elif tagFilter[1] == '*':
             # handle (namespace, '*')
-            descendants = filter(lambda desc:desc.xmlIfExtElementWrapper.getNamespaceURI() == tagFilter[0], 
+            descendants = filter(lambda desc:desc.xmlIfExtElementWrapper.getNamespaceURI() == tagFilter[0],
                                  self.element.xmlIfExtGetElementsByTagName())
         else:
             nsNameFilter = NsNameTupleFactory(tagFilter)
@@ -682,7 +682,7 @@ class XmlElementWrapper:
 
     def getElementsByTagNameNS (self, namespaceURI, tagFilter=None):
         """Retrieve all descendant ElementWrapper object of current node whose tag name match 'namespaceURI' and 'tagFilter'.
-        
+
         Input parameter:
             namespaceURI: the namespace URI of the descendants or None
             tagFilter:    retrieve only the descendants with this localName ('*' or None returns all descendants)
@@ -704,7 +704,7 @@ class XmlElementWrapper:
             matchingElements = self.element.xmlIfExtGetIterator()
         elif tagFilter[1] == '*':
             # handle (namespace, '*')
-            matchingElements = filter(lambda desc:desc.xmlIfExtElementWrapper.getNamespaceURI() == tagFilter[0], 
+            matchingElements = filter(lambda desc:desc.xmlIfExtElementWrapper.getNamespaceURI() == tagFilter[0],
                                       self.element.xmlIfExtGetIterator())
         else:
             nsNameFilter = NsNameTupleFactory(tagFilter)
@@ -765,12 +765,12 @@ class XmlElementWrapper:
 
     def insertSubtree (self, refChildWrapper, subTreeWrapper, insertSubTreeRootNode=1):
         """Insert the given subtree before 'refChildWrapper' ('refChildWrapper' is not removed!)
-        
+
         Input parameter:
             refChildWrapper:       reference child ElementWrapper object
             subTreeWrapper:        subtree wrapper object which contains the subtree to be inserted
             insertSubTreeRootNode: if 1, root node of subtree is inserted into parent tree, otherwise not
-        """ 
+        """
         if refChildWrapper != None:
             self.element.xmlIfExtInsertSubtree (refChildWrapper.element, subTreeWrapper.getTree(), insertSubTreeRootNode)
         else:
@@ -795,7 +795,7 @@ class XmlElementWrapper:
 
     def getAttributeDict (self):
         """Retrieve a dictionary containing all attributes of the current element node.
-        
+
         Returns a dictionary (copy) containing all attributes of the current element node.
         """
         return self.element.xmlIfExtGetAttributeDict()
@@ -804,7 +804,7 @@ class XmlElementWrapper:
     def getAttributeList (self):
         """Retrieve a list containing all attributes of the current element node
            in the sequence specified in the input XML file.
-        
+
         Returns a list (copy) containing all attributes of the current element node
         in the sequence specified in the input XML file (TODO: does currently not work for 4DOM/pyXML interface).
         """
@@ -813,7 +813,7 @@ class XmlElementWrapper:
 
     def getAttribute (self, tupleOrAttrName):
         """Retrieve an attribute value of the current element node.
-        
+
         Input parameter:
             tupleOrAttrName:  tuple '(namespace, attributeName)' or 'attributeName' if no namespace is used
         Returns the value of the specified attribute.
@@ -824,7 +824,7 @@ class XmlElementWrapper:
 
     def getAttributeOrDefault (self, tupleOrAttrName, defaultValue):
         """Retrieve an attribute value of the current element node or the given default value if the attribute doesn't exist.
-        
+
         Input parameter:
             tupleOrAttrName:  tuple '(namespace, attributeName)' or 'attributeName' if no namespace is used
         Returns the value of the specified attribute or the given default value if the attribute doesn't exist.
@@ -837,7 +837,7 @@ class XmlElementWrapper:
 
     def getQNameAttribute (self, tupleOrAttrName):
         """Retrieve a QName attribute value of the current element node.
-        
+
         Input parameter:
             tupleOrAttrName:  tuple '(namespace, attributeName)' or 'attributeName' if no namespace is used
         Returns the value of the specified QName attribute as tuple (namespace, localName),
@@ -856,7 +856,7 @@ class XmlElementWrapper:
 
     def hasAttribute (self, tupleOrAttrName):
         """Checks if the requested attribute exist for the current element node.
-        
+
         Returns 1 if the attribute exists, otherwise 0.
         """
         nsName = NsNameTupleFactory(tupleOrAttrName)
@@ -868,9 +868,9 @@ class XmlElementWrapper:
 
 
     def setAttribute (self, tupleOrAttrName, attributeValue):
-        """Sets an attribute value of the current element node. 
+        """Sets an attribute value of the current element node.
         If the attribute does not yet exist, it will be created.
-               
+
         Input parameter:
             tupleOrAttrName:  tuple '(namespace, attributeName)' or 'attributeName' if no namespace is used
             attributeValue:   attribute value to be set
@@ -890,9 +890,9 @@ class XmlElementWrapper:
 
 
     def setAttributeDefault (self, tupleOrAttrName, defaultValue):
-        """Create attribute and set value to default if it does not yet exist for the current element node. 
+        """Create attribute and set value to default if it does not yet exist for the current element node.
         If the attribute is already existing nothing is done.
-               
+
         Input parameter:
             tupleOrAttrName:  tuple '(namespace, attributeName)' or 'attributeName' if no namespace is used
             defaultValue:     default attribute value to be set
@@ -902,9 +902,9 @@ class XmlElementWrapper:
 
 
     def removeAttribute (self, tupleOrAttrName):
-        """Removes an attribute from the current element node. 
+        """Removes an attribute from the current element node.
         No exception is raised if there is no matching attribute.
-               
+
         Input parameter:
             tupleOrAttrName:  tuple '(namespace, attributeName)' or 'attributeName' if no namespace is used
         """
@@ -919,7 +919,7 @@ class XmlElementWrapper:
 
     def processWsAttribute (self, tupleOrAttrName, wsAction):
         """Process white space action for the specified attribute according to requested 'wsAction'.
-        
+
         Input parameter:
             tupleOrAttrName:  tuple '(namespace, attributeName)' or 'attributeName' if no namespace is used
             wsAction:         'collapse':  substitute multiple whitespace characters by a single ' '
@@ -930,13 +930,13 @@ class XmlElementWrapper:
         if newValue != attributeValue:
             self.setAttribute(tupleOrAttrName, newValue)
         return newValue
-    
+
 
 #++++++++++++ methods concerning the content of the current node ++++++++++++++++++++++++
 
     def getElementValue (self, ignoreEmtpyStringFragments=0):
         """Retrieve the content of the current element node.
-        
+
         Returns the content of the current element node as string.
         The content of multiple text nodes / CDATA nodes are concatenated to one string.
 
@@ -948,13 +948,13 @@ class XmlElementWrapper:
 
     def getElementValueFragments (self, ignoreEmtpyStringFragments=0):
         """Retrieve the content of the current element node as value fragment list.
-        
+
         Returns the content of the current element node as list of string fragments.
         Each list element represents one text nodes / CDATA node.
 
         Input parameter:
             ignoreEmtpyStringFragments:   if 1, text nodes containing only whitespaces are ignored
-        
+
         Method has to be implemented by derived classes!
         """
         return self.element.xmlIfExtGetElementValueFragments (ignoreEmtpyStringFragments)
@@ -962,32 +962,32 @@ class XmlElementWrapper:
 
     def setElementValue (self, elementValue):
         """Set the content of the current element node.
-        
+
         Input parameter:
             elementValue:   string containing the new element value
-        If multiple text nodes / CDATA nodes are existing, 'elementValue' is set 
-        for the first text node / CDATA node. All other text nodes /CDATA nodes are set to ''. 
+        If multiple text nodes / CDATA nodes are existing, 'elementValue' is set
+        for the first text node / CDATA node. All other text nodes /CDATA nodes are set to ''.
         """
         self.element.xmlIfExtSetElementValue(elementValue)
 
 
     def processWsElementValue (self, wsAction):
         """Process white space action for the content of the current element node according to requested 'wsAction'.
-        
+
         Input parameter:
             wsAction:         'collapse':  substitute multiple whitespace characters by a single ' '
                               'replace':   substitute each whitespace characters by a single ' '
         """
         self.element.xmlIfExtProcessWsElementValue(wsAction)
         return self.getElementValue()
-        
+
 
 #++++++++++++ methods concerning the info about the current node in the XML file ++++++++++++++++++++
 
 
     def getStartLineNumber (self):
         """Retrieve the start line number of the current element node.
-        
+
         Returns the start line number of the current element node in the XML file
         """
         return self.startLineNumber
@@ -995,7 +995,7 @@ class XmlElementWrapper:
 
     def getEndLineNumber (self):
         """Retrieve the end line number of the current element node.
-        
+
         Returns the end line number of the current element node in the XML file
         """
         return self.endLineNumber
@@ -1003,7 +1003,7 @@ class XmlElementWrapper:
 
     def getAbsUrl (self):
         """Retrieve the absolute URL of the XML file the current element node belongs to.
-        
+
         Returns the absolute URL of the XML file the current element node belongs to.
         """
         return self.absUrl
@@ -1011,7 +1011,7 @@ class XmlElementWrapper:
 
     def getBaseUrl (self):
         """Retrieve the base URL of the XML file the current element node belongs to.
-        
+
         Returns the base URL of the XML file the current element node belongs to.
         """
         return self.baseUrl
@@ -1019,7 +1019,7 @@ class XmlElementWrapper:
 
     def getFilePath (self):
         """Retrieve the file path of the XML file the current element node belongs to.
-        
+
         Returns the file path of the XML file the current element node belongs to.
         """
         return self.filePath
@@ -1027,7 +1027,7 @@ class XmlElementWrapper:
 
     def getLocation (self, end=0, fullpath=0):
         """Retrieve a string containing file name and line number of the current element node.
-        
+
         Input parameter:
             end:      1 if end line number shall be shown, 0 for start line number
             fullpath: 1 if the full path of the XML file shall be shown, 0 for only the file name
@@ -1044,7 +1044,7 @@ class XmlElementWrapper:
 
     def getCurrentNamespaces (self):
         """Retrieve the namespace prefixes visible for the current element node
-        
+
         Returns a list of the namespace prefixes visible for the current node.
         """
         return self.curNs
@@ -1052,7 +1052,7 @@ class XmlElementWrapper:
 
     def qName2NsName (self, qName, useDefaultNs):
         """Convert a qName 'prefix:localName' to a tuple '(namespace, localName)'.
-        
+
         Input parameter:
             qName:         qName to be converted
             useDefaultNs:  1 if default namespace shall be used
@@ -1077,7 +1077,7 @@ class XmlElementWrapper:
 
     def nsName2QName (self, nsLocalName):
         """Convert a tuple '(namespace, localName)' to a string 'prefix:localName'
-        
+
         Input parameter:
             nsLocalName:   tuple '(namespace, localName)' to be converted
         Returns the corresponding string 'prefix:localName' for 'nsLocalName'.
@@ -1089,7 +1089,7 @@ class XmlElementWrapper:
 
     def getNamespace (self, qName):
         """Retrieve namespace for a qName 'prefix:localName'.
-        
+
         Input parameter:
             qName:         qName 'prefix:localName'
         Returns the corresponding namespace for the prefix of 'qName'.
@@ -1112,7 +1112,7 @@ class XmlElementWrapper:
 
     def getNsPrefix (self, nsLocalName):
         """Retrieve prefix for a tuple '(namespace, localName)'.
-        
+
         Input parameter:
             nsLocalName:     tuple '(namespace, localName)'
         Returns the corresponding prefix for the namespace of 'nsLocalName'.
@@ -1132,7 +1132,7 @@ class XmlElementWrapper:
 
     def getXPath (self, xPath, namespaceRef=None, useDefaultNs=1, attrIgnoreList=[]):
         """Retrieve node list or attribute list for specified XPath
-        
+
         Input parameter:
             xPath:           string containing xPath specification
             namespaceRef:    scope for namespaces (default is own element node)
@@ -1147,7 +1147,7 @@ class XmlElementWrapper:
 
     def getXPathList (self, xPath, namespaceRef=None, useDefaultNs=1, attrIgnoreList=[]):
         """Retrieve node list or attribute list for specified XPath
-        
+
         Input parameter:
             xPath:           string containing xPath specification
             namespaceRef:    scope for namespaces (default is own element node)
@@ -1252,7 +1252,7 @@ class XmlElementWrapper:
 
     def __createElement (self, tupleOrLocalName, attributeDict):
         """Create a new ElementWrapper object.
-        
+
         Input parameter:
             tupleOrLocalName: tuple '(namespace, localName)' or 'localName' if no namespace is used
             attributeDict:    dictionary which contains the attributes and their values of the element node to be created
@@ -1265,7 +1265,7 @@ class XmlElementWrapper:
 
     def __updateAttrMaxLengthDict (self, attrMaxLengthDict):
         """Update dictionary which contains the maximum length of node attributes.
-        
+
         Used for pretty print to align the attributes of child nodes.
         attrMaxLengthDict is in/out parameter.
         """
@@ -1289,9 +1289,7 @@ class XmlElementWrapper:
             else:
                 self.__childrenCache.clear()
                 self.__firstChildCache.clear()
-                
+
 
     def __useCaching(self):
         return self.treeWrapper.useCaching()
-    
-
