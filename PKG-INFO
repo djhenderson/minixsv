@@ -11,8 +11,16 @@ Description: minixsv is a lightweight XML schema validator written in "pure" Pyt
         minixsv is based on genxmlif, a generic XML interface class,
         which currently supports minidom, elementtree or 4DOM/pyXML as XML parser
         Other parsers can be adapted by implementing an appropriate derived interface class
-        
+
 Platform: Python 2.4 and later
-Classifier: Development Status :: 4 - Beta
-Classifier: Operating System :: OS Independent
-Classifier: Topic :: Text Processing :: Markup :: XML
+Classifier: "Development Status :: 4 - Beta",
+Classifier: Intended Audience :: Developers",
+Classifier: License :: OSI Approved :: Python (MIT style)",
+Classifier: Operating System :: OS Independent",
+Classifier: Programming Language :: Python",
+Classifier: Programming Language :: Python :: 2",
+Classifier: Programming Language :: Python :: 2.7",
+Classifier: Programming Language :: Python :: 3",
+Classifier: Programming Language :: Python :: 3.6",
+Classifier: Topic :: Text Processing :: Markup :: XML",
+Classifier: Topic :: Software Development :: Libraries :: Python Modules",
