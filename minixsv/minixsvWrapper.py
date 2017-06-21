@@ -35,7 +35,7 @@ def checkShellInputParameter():
 
         if ('-?','') in options or ('-h','') in options:
             print(validSyntaxText)
-            sys.exit(-1)
+            sys.exit(1)
         else:
             if len (arguments) == 1:
                 xmlInputFilename = arguments[0]
@@ -47,14 +47,14 @@ def checkShellInputParameter():
                             xmlParser = a
                         else:
                             print('Invalid XML parser %s!' %(a))
-                            sys.exit(-1)
+                            sys.exit(1)
             else:
                 print('minixsv needs one argument (XML input file)!')
-                sys.exit(-1)
+                sys.exit(1)
 
     except getopt.GetoptError as errstr:
         print(errstr)
-        sys.exit(-1)
+        sys.exit(1)
     return xmlInputFilename, xsdFilename, xmlParser
 
 
@@ -64,13 +64,13 @@ def main():
         parseAndValidate (xmlInputFilename, xsdFile=xsdFileName, xmlIfClass=xmlParser)
     except IOError as errstr:
         print(errstr)
-        sys.exit(-1)
+        sys.exit(1)
     except GenXmlIfError as errstr:
         print(errstr)
-        sys.exit(-1)
+        sys.exit(1)
     except XsvalError as errstr:
         print(errstr)
-        sys.exit(-1)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
