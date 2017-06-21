@@ -57,6 +57,7 @@ __all__ = [
     ]
 
 
+from __future__        import print_function
 import string
 import genxmlif
 from minixsv           import *
@@ -97,7 +98,7 @@ def addUserSpecXmlIfClass (xmlIfKey, factory):
 # convenience function for validating
 # 1. XML schema file
 # 2. XML input file
-# If xsdFile is specified, it will ONLY be used for validation if no schema file 
+# If xsdFile is specified, it will ONLY be used for validation if no schema file
 # is specified in the input file
 # If xsdFile=None, the schemaLocation attribute is expected in the root tag of the XML input file
 #
@@ -121,7 +122,7 @@ def parseAndValidateString (inputText, xsdText=None, **kw):
 # factory for validating
 # 1. XML schema file (only if validateSchema=1)
 # 2. XML input file
-# If xsdFile is specified, it will ONLY be used for validation if no schema file 
+# If xsdFile is specified, it will ONLY be used for validation if no schema file
 # is specified in the input file
 # If xsdFile=None, the schemaLocation attribute is expected in the root tag of the XML input file
 #
@@ -177,7 +178,7 @@ def parseAndValidateXmlSchemaString (xsdText, **kw):
 class XsValidator:
     def __init__(self, xmlIfClass=XMLIF_MINIDOM,
                  elementWrapperClass=XsvXmlElementWrapper,
-                 warningProc=IGNORE_WARNINGS, errorLimit=_XS_VAL_DEFAULT_ERROR_LIMIT, 
+                 warningProc=IGNORE_WARNINGS, errorLimit=_XS_VAL_DEFAULT_ERROR_LIMIT,
                  verbose=0, useCaching=1, processXInclude=1):
 
         self.warningProc    = warningProc
@@ -199,7 +200,7 @@ class XsValidator:
     #
     def getVersion (self):
         return __version__
-        
+
 
     ########################################
     # parse XML file
@@ -317,7 +318,7 @@ class XsValidator:
 
             if namespace != xsdTreeWrapper.getRootNode().getAttributeOrDefault("targetNamespace", None):
                 self.errorHandler.raiseError ("Namespace of 'schemaLocation' attribute doesn't match target namespace of %s!" %(xsdFile), inputTreeWrapper.getRootNode())
-            
+
         return xsdTreeWrapperList
 
 
@@ -351,7 +352,7 @@ class XsValidator:
     #
     def _verbosePrint (self, text):
         if self.verbose:
-            print text
+            print(text)
 
 
 ########################################
@@ -370,4 +371,3 @@ def _interfaceFactoryElementTree (verbose, useCaching, processXInclude):
 _xmlIfDict = {XMLIF_MINIDOM    :_interfaceFactoryMinidom,
               XMLIF_4DOM       :_interfaceFactory4Dom,
               XMLIF_ELEMENTTREE:_interfaceFactoryElementTree}
-

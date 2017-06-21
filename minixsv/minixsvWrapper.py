@@ -1,5 +1,6 @@
 #!/usr/local/bin/python
 
+from __future__        import print_function
 import sys
 import getopt
 from genxmlif          import GenXmlIfError
@@ -17,10 +18,10 @@ Syntax: minixsv [-h] [-?] [-p Parser] [-s XSD-Filename] XML-Filename
 
 Options:
 -h, -?:          Display this help text
--p Parser:       XML Parser to be used 
+-p Parser:       XML Parser to be used
                  (XMLIF_MINIDOM, XMLIF_ELEMENTTREE, XMLIF_4DOM
                   default: XMLIF_ELEMENTTREE)
--s XSD-FileName: specify the schema file for validation 
+-s XSD-FileName: specify the schema file for validation
                  (if not specified in XML-File)
 '''
 
@@ -33,7 +34,7 @@ def checkShellInputParameter():
         (options, arguments) = getopt.getopt(sys.argv[1:], '?hp:s:')
 
         if ('-?','') in options or ('-h','') in options:
-            print validSyntaxText
+            print(validSyntaxText)
             sys.exit(-1)
         else:
             if len (arguments) == 1:
@@ -43,16 +44,16 @@ def checkShellInputParameter():
                         xsdFilename = a
                     if o == "-p":
                         if a in (XMLIF_MINIDOM, XMLIF_ELEMENTTREE, XMLIF_4DOM):
-                            xmlParser = a    
+                            xmlParser = a
                         else:
-                            print 'Invalid XML parser %s!' %(a)
+                            print('Invalid XML parser %s!' %(a))
                             sys.exit(-1)
             else:
-                print 'minixsv needs one argument (XML input file)!'
+                print('minixsv needs one argument (XML input file)!')
                 sys.exit(-1)
 
     except getopt.GetoptError, errstr:
-        print errstr
+        print(errstr)
         sys.exit(-1)
     return xmlInputFilename, xsdFilename, xmlParser
 
@@ -62,15 +63,14 @@ def main():
     try:
         parseAndValidate (xmlInputFilename, xsdFile=xsdFileName, xmlIfClass=xmlParser)
     except IOError, errstr:
-        print errstr
+        print(errstr)
         sys.exit(-1)
     except GenXmlIfError, errstr:
-        print errstr
+        print(errstr)
         sys.exit(-1)
     except XsvalError, errstr:
-        print errstr
+        print(errstr)
         sys.exit(-1)
-    
+
 if __name__ == "__main__":
     main()
-    

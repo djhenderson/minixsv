@@ -38,6 +38,7 @@
 # OF THIS SOFTWARE.
 # --------------------------------------------------------------------
 
+from __future__                import print_function
 import urllib
 from xml.dom.ext.reader.Sax2   import Reader, XmlDomGenerator
 from xml.sax._exceptions       import SAXParseException
@@ -55,7 +56,7 @@ class XmlInterface4Dom (XmlInterfaceDom):
         XmlInterfaceDom.__init__ (self, verbose, useCaching, processXInclude)
         self.xmlIfType = XMLIF_4DOM
         if self.verbose:
-            print "Using 4Dom interface module..."
+            print("Using 4Dom interface module...")
 
 
     def parse (self, file, baseUrl="", internalOwnerDoc=None):
@@ -72,10 +73,10 @@ class XmlInterface4Dom (XmlInterfaceDom):
 
 
     def _parseStream (self, fp, file, absUrl, internalOwnerDoc):
-        reader = Reader(validate=0, keepAllWs=0, catName=None, 
+        reader = Reader(validate=0, keepAllWs=0, catName=None,
                         saxHandlerClass=ExtXmlDomGenerator, parser=None)
         reader.handler.extinit(file, absUrl, reader.parser, self)
-        if internalOwnerDoc != None: 
+        if internalOwnerDoc != None:
             ownerDoc = internalOwnerDoc.document
         else:
             ownerDoc = None
@@ -87,19 +88,19 @@ class XmlInterface4Dom (XmlInterfaceDom):
             raise GenXmlIfError, "%s: SAXParseException: %s" %(file, str(errInst))
 
         treeWrapper = reader.handler.treeWrapper
-        
+
         # XInclude support
         if self.processXInclude:
-            if internalOwnerDoc == None: 
+            if internalOwnerDoc == None:
                 internalOwnerDoc = treeWrapper.getTree()
             self.xInclude (treeWrapper.getRootNode(), absUrl, internalOwnerDoc)
-            
+
         return treeWrapper
 
 
 ###################################################
 # Extended DOM generator class derived from XmlDomGenerator
-# extended to store related line numbers, file/URL names and 
+# extended to store related line numbers, file/URL names and
 # defined namespaces in the node object
 
 class ExtXmlDomGenerator(XmlDomGenerator, XmlIfBuilderExtensionDom):

@@ -41,6 +41,7 @@
 # OF THIS SOFTWARE.
 # --------------------------------------------------------------------
 
+from __future__        import print_function
 import sys
 import string
 import urllib
@@ -49,10 +50,10 @@ from xml.parsers.expat import ExpatError
 # from version 2.5 on the elementtree module is part of the standard python distribution
 if sys.version_info[:2] >= (2,5):
     from xml.etree.ElementTree      import ElementTree, _ElementInterface, XMLTreeBuilder, TreeBuilder
-    from xml.etree import ElementInclude 
+    from xml.etree import ElementInclude
 else:
     from elementtree.ElementTree    import ElementTree, _ElementInterface, XMLTreeBuilder, TreeBuilder
-    from elementtree import ElementInclude 
+    from elementtree import ElementInclude
 from genxmlif                   import XMLIF_ELEMENTTREE, GenXmlIfError
 from xmlifUtils                 import convertToAbsUrl, processWhitespaceAction, collapseString, toClarkQName, splitQName
 from xmlifBase                  import XmlIfBuilderExtensionBase
@@ -70,7 +71,7 @@ class XmlInterfaceElementTree (XmlInterfaceBase):
         XmlInterfaceBase.__init__ (self, verbose, useCaching, processXInclude)
         self.xmlIfType = XMLIF_ELEMENTTREE
         if self.verbose:
-            print "Using elementtree interface module..."
+            print("Using elementtree interface module...")
 
 
     def createXmlTree (self, namespace, xmlRootTagName, attributeDict={}, publicId=None, systemId=None):
@@ -90,7 +91,7 @@ class XmlInterfaceElementTree (XmlInterfaceBase):
             parser = ExtXMLTreeBuilder(file, absUrl, self, treeWrapper)
             treeWrapper.getTree().parse(fp, parser)
             fp.close()
-            
+
             # XInclude support
             if self.processXInclude:
                 loaderInst = ExtXIncludeLoader (self.parse, absUrl, ownerDoc)
@@ -98,14 +99,14 @@ class XmlInterfaceElementTree (XmlInterfaceBase):
                     ElementInclude.include(treeWrapper.getTree().getroot(), loaderInst.loader)
                 except IOError, errInst:
                     raise GenXmlIfError, "%s: IOError: %s" %(file, str(errInst))
-            
+
         except ExpatError, errstr:
             fp.close()
             raise GenXmlIfError, "%s: ExpatError: %s" %(file, str(errstr))
         except ElementInclude.FatalIncludeError, errInst:
             fp.close()
             raise GenXmlIfError, "%s: XIncludeError: %s" %(file, str(errInst))
-            
+
         return treeWrapper
 
 
@@ -141,7 +142,7 @@ class ElementTreeExtension (ElementTree):
 
     def xmlIfExtCloneTree (self, rootElementCopy):
         return self.__class__(element=rootElementCopy)
-        
+
 
 #########################################################
 # Wrapper class for Element class
@@ -155,14 +156,14 @@ class ElementExtension (_ElementInterface):
     def xmlIfExtUnlink (self):
         self.xmlIfExtElementWrapper = None
         self.__xmlIfExtParentElement = None
-        
+
 
     def xmlIfExtCloneNode (self):
         nodeCopy = self.__class__(self.tag, self.attrib.copy())
         nodeCopy.text = self.text
         nodeCopy.tail = self.tail
         return nodeCopy
-    
+
 
     def xmlIfExtGetTagName (self):
         return self.tag
@@ -179,7 +180,7 @@ class ElementExtension (_ElementInterface):
 
     def xmlIfExtSetParentNode (self, parentElement):
         self.__xmlIfExtParentElement = parentElement
-    
+
 
     def xmlIfExtGetChildren (self, filterTag=None):
         if filterTag == None:
@@ -216,7 +217,7 @@ class ElementExtension (_ElementInterface):
         clarkFilterTag = toClarkQName(filterTag)
         return self.getiterator (clarkFilterTag)
 
-    
+
     def xmlIfExtAppendChild (self, childElement):
         self.append (childElement)
         childElement.xmlIfExtSetParentNode(self)
@@ -296,24 +297,24 @@ class ElementExtension (_ElementInterface):
         else:
             return ""
 
-    
+
     def xmlIfExtGetElementTailText (self):
         if self.tail != None:
             return self.tail
         else:
             return ""
-    
+
 
     def xmlIfExtSetElementValue (self, elementValue):
         self.text = elementValue
         for child in self.getchildren():
             child.tail = None
-            
+
 
     def xmlIfExtProcessWsElementValue (self, wsAction):
         noOfTextFragments = reduce(lambda sum, child: sum + (child.tail != None), self.getchildren(), 0)
         noOfTextFragments += (self.text != None)
-                
+
         rstrip = 0
         lstrip = 1
         if self.text != None:
@@ -386,7 +387,7 @@ class ExtXMLTreeBuilder (XMLTreeBuilder, XmlIfBuilderExtensionBase):
 
 ###################################################
 # XInclude loader
-# 
+#
 
 class ExtXIncludeLoader:
 
@@ -394,7 +395,7 @@ class ExtXIncludeLoader:
         self.parser = parser
         self.baseUrl = baseUrl
         self.ownerDoc = ownerDoc
-    
+
     def loader(self, href, parse, encoding=None):
         if parse == "xml":
             data = self.parser(href, self.baseUrl, self.ownerDoc).getTree().getroot()

@@ -6,7 +6,7 @@
 #
 # history:
 # 2005-04-25 rl   created
-# 2007-07-02 rl   complete re-design, internal wrapper 
+# 2007-07-02 rl   complete re-design, internal wrapper
 #                 for DOM trees and elements introduced
 # 2008-07-01 rl   Limited support of XInclude added
 #
@@ -40,6 +40,7 @@
 # OF THIS SOFTWARE.
 # --------------------------------------------------------------------
 
+from __future__           import print_function
 import string
 import copy
 import urllib
@@ -53,10 +54,10 @@ from xmlifApi             import XmlInterfaceBase
 
 class XmlInterfaceDom (XmlInterfaceBase):
     """Derived interface class for handling of DOM parsers.
-    
+
     For description of the interface methods see xmlifbase.py.
     """
-    
+
     def xInclude (self, elementWrapper, baseUrl, ownerDoc):
         filePath = elementWrapper.getFilePath()
         for childElementWrapper in elementWrapper.getChildren():
@@ -66,7 +67,7 @@ class XmlInterfaceDom (XmlInterfaceBase):
                 parse = childElementWrapper.getAttributeOrDefault ("parse", "xml")
                 encoding = childElementWrapper.getAttribute ("encoding")
                 if self.verbose:
-                    print "Xinclude: %s" %href
+                    print("Xinclude: %s" %href)
                 try:
                     if parse == "xml":
                         subTreeWrapper = self.parse (href, baseUrl, ownerDoc)
@@ -97,7 +98,7 @@ class InternalDomTreeWrapper:
     """
     def __init__ (self, document):
         self.document   = document
-    
+
     def xmlIfExtGetRootNode (self):
         domNode = self.document
         if domNode.nodeType == Node.DOCUMENT_NODE:
@@ -122,11 +123,11 @@ class InternalDomTreeWrapper:
 
     def xmlIfExtCreateTextNode (self, data):
         return self.document.createTextNode(data)
-    
+
 
     def xmlIfExtImportNode (self, node):
-        return self.document.importNode (node, 0) 
-        
+        return self.document.importNode (node, 0)
+
 
     def xmlIfExtCloneTree (self, rootElementCopy):
         domImpl = getDOMImplementation()
@@ -136,7 +137,7 @@ class InternalDomTreeWrapper:
         documentCopy.documentElement = rootElementCopy.element
         return self.__class__(documentCopy)
 
-    
+
 
 #########################################################
 # Internal Wrapper class for a Dom Element class
@@ -144,16 +145,16 @@ class InternalDomTreeWrapper:
 class InternalDomElementWrapper:
     """Internal Wrapper for a Dom Element class.
     """
-    
+
     def __init__ (self, element, internalDomTreeWrapper):
         self.element = element
         element.xmlIfExtInternalWrapper = self
         self.internalDomTreeWrapper = internalDomTreeWrapper
-        
+
 
     def xmlIfExtUnlink (self):
         self.xmlIfExtElementWrapper = None
-        
+
 
     def xmlIfExtCloneNode (self):
         nodeCopy = self.__class__(self.element.cloneNode(deep=0), self.internalDomTreeWrapper)
@@ -164,7 +165,7 @@ class InternalDomElementWrapper:
 #            nodeCopy.xmlIfExtSetAttribute(nsAttrName, attrValue, self.xmlIfExtElementWrapper.getCurrentNamespaces())
         return nodeCopy
 
-    
+
     def xmlIfExtGetTagName (self):
         return self.element.tagName
 
@@ -180,15 +181,15 @@ class InternalDomElementWrapper:
         else:
             return None
 
-    
+
     def xmlIfExtSetParentNode (self, parentElement):
         pass # nothing to do since parent is provided by DOM interface
-    
+
 
     def xmlIfExtGetChildren (self, tagFilter=None):
         # TODO: Handle also wildcard tagFilter = (namespace, None)
         children = filter (lambda e: (e.nodeType == Node.ELEMENT_NODE) and          # - only ELEMENTs
-                                      (tagFilter == None or 
+                                      (tagFilter == None or
                                        (e.namespaceURI == tagFilter[0] and e.localName == tagFilter[1])), # - if tagFilter given --> check
                            self.element.childNodes )                                 # from element's nodes
 
@@ -215,7 +216,7 @@ class InternalDomElementWrapper:
         elementList.extend(self.element.getElementsByTagNameNS( tagFilter[0], tagFilter[1] ))
         return map( lambda element: element.xmlIfExtInternalWrapper, elementList )
 
-    
+
     def xmlIfExtAppendChild (self, childElement):
         self.element.appendChild (childElement.element)
 
@@ -263,7 +264,7 @@ class InternalDomElementWrapper:
             qName = nsNameToQName (nsAttrName, curNs)
         else:
             qName = nsAttrName[1]
-        
+
         self.element.setAttributeNS (nsAttrName[0], qName, attributeValue)
 
 
@@ -292,7 +293,7 @@ class InternalDomElementWrapper:
                     break
         return "".join(elementTextList)
 
-    
+
     def xmlIfExtGetElementTailText (self):
         tailTextList = ["",]
         nextSib = self.element.nextSibling
@@ -303,7 +304,7 @@ class InternalDomElementWrapper:
             else:
                 break
         return "".join(tailTextList)
-        
+
 
     def xmlIfExtSetElementValue (self, elementValue):
         if self.__xmlIfExtGetChildTextNodes() == []:
@@ -314,7 +315,7 @@ class InternalDomElementWrapper:
             if len (self.__xmlIfExtGetChildTextNodes()) > 1:
                 for textNode in self.__xmlIfExtGetChildTextNodes()[1:]:
                     textNode.data = ""
-            
+
 
     def xmlIfExtProcessWsElementValue (self, wsAction):
         textNodes = self.__xmlIfExtGetChildTextNodes()
@@ -343,10 +344,10 @@ class InternalDomElementWrapper:
         """Return list of TEXT nodes."""
         return filter (lambda e: ( e.nodeType in (Node.TEXT_NODE, Node.CDATA_SECTION_NODE) ), # - only TEXT-NODES
                        self.element.childNodes)                         # from element's child nodes
-        
+
 
 
 class XmlIfBuilderExtensionDom (XmlIfBuilderExtensionBase):
     """XmlIf builder extension class for DOM parsers."""
-    
+
     pass

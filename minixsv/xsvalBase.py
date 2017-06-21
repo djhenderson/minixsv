@@ -39,6 +39,7 @@
 # OF THIS SOFTWARE.
 # --------------------------------------------------------------------
 
+from __future__          import print_function
 import string
 import copy
 from minixsv             import *
@@ -70,7 +71,7 @@ class XsValBase:
 
     def unlink(self):
         self.simpleTypeVal.unlink()
-        
+
 
     ########################################
     # validate inputTree against xsdTree
@@ -93,12 +94,12 @@ class XsValBase:
             wxsdLookupDict = {"ElementDict":{}, "TypeDict":{}, "GroupDict":{},
                               "AttrGroupDict":{}, "AttributeDict":{}, "IdentityConstrDict":{}}
             self._importWellknownSchemas(wxsdLookupDict)
-   
-        self.xsdLookupDict = {"ElementDict":        wxsdLookupDict["ElementDict"].copy(), 
-                              "TypeDict":           wxsdLookupDict["TypeDict"].copy(), 
+
+        self.xsdLookupDict = {"ElementDict":        wxsdLookupDict["ElementDict"].copy(),
+                              "TypeDict":           wxsdLookupDict["TypeDict"].copy(),
                               "GroupDict":          wxsdLookupDict["GroupDict"].copy(),
-                              "AttrGroupDict":      wxsdLookupDict["AttrGroupDict"].copy(), 
-                              "AttributeDict":      wxsdLookupDict["AttributeDict"].copy(), 
+                              "AttrGroupDict":      wxsdLookupDict["AttrGroupDict"].copy(),
+                              "AttributeDict":      wxsdLookupDict["AttributeDict"].copy(),
                               "IdentityConstrDict": wxsdLookupDict["IdentityConstrDict"].copy()}
         self.xsdElementDict        = self.xsdLookupDict["ElementDict"]
         self.xsdTypeDict           = self.xsdLookupDict["TypeDict"]
@@ -121,9 +122,9 @@ class XsValBase:
             if xsdRoot.getFilePath() != os.path.join (MINIXSV_DIR, "XMLSchema.xsd"):
                 self._initInternalAttributes (xsdRoot)
                 self._updateLookupTables(xsdRoot, self.xsdLookupDict)
-            
+
                 self._includeAndImport (xsdTree, xsdTree, self.xsdIncludeDict, self.xsdLookupDict)
-            
+
 
         self.simpleTypeVal = XsSimpleTypeVal(self)
 
@@ -147,7 +148,7 @@ class XsValBase:
         else:
             self._raiseError ("Used root tag %s not found in schema file(s)!"
                               %repr(inputRootNsName), self.inputRoot)
-        
+
 
     ########################################
     # include/import all files specified in the schema file
@@ -222,7 +223,7 @@ class XsValBase:
                         attribute = "ref"
                     if attrNode.getQNameAttribute(attribute) == redefType:
                         attrNode[attribute] = attrNode[attribute] + "__ORG"
-                
+
             rootNode.removeChild (redefineNode)
 
 
@@ -242,7 +243,7 @@ class XsValBase:
             includeUrl = includeNode.getAttributeOrDefault("schemaLocation", None)
             if expNamespace != None and includeUrl == None:
                 includeUrl = expNamespace + ".xsd"
-            if includeUrl != None:            
+            if includeUrl != None:
                 if expNamespace not in (XML_NAMESPACE, XSI_NAMESPACE):
                     self._includeSchemaFile (baseTree, tree, includeNode, expNamespace, includeUrl, includeNode.getBaseUrl(), includeDict, lookupDict)
             else:
@@ -269,7 +270,7 @@ class XsValBase:
     ########################################
     # include/import a schema file
     #
-    def _includeSchemaFile (self, baseTree, tree, nextSibling, expNamespace, includeUrl, baseUrl, includeDict, lookupDict, 
+    def _includeSchemaFile (self, baseTree, tree, nextSibling, expNamespace, includeUrl, baseUrl, includeDict, lookupDict,
                             adaptTargetNamespace=0):
         if includeUrl == None:
             self._raiseError ("Schema location attribute missing!", nextSibling)
@@ -279,7 +280,7 @@ class XsValBase:
             return
 
         if self.verbose:
-            print "including %s..." %(includeUrl)
+            print("including %s..." %(includeUrl))
         rootNode = tree.getRootNode()
 
         subTree = self._parseIncludeSchemaFile(baseTree, tree, nextSibling, includeUrl, baseUrl)
@@ -293,7 +294,7 @@ class XsValBase:
             if expNamespace != stRootNode["targetNamespace"]:
                 self._raiseError ("Target namespace of file %s does not match!" %repr(includeUrl), nextSibling)
         else:
-           if expNamespace != None: 
+           if expNamespace != None:
                if adaptTargetNamespace:
                     # if no target namespace is specified in the included file
                     # the target namespace of the parent file is taken
@@ -302,7 +303,7 @@ class XsValBase:
                         stDescNode.curNs.append((EMPTY_PREFIX,expNamespace))
                else:
                    self._raiseError ("Target namespace of file %s does not match!" %repr(includeUrl), nextSibling)
-                    
+
         self._updateLookupTables (subTree.getRootNode(), lookupDict)
         self._includeAndImport (baseTree, subTree, includeDict, lookupDict)
         if includeUrl not in (r"C:\Program Files\Python24\Lib\site-packages\minixsv\xml.xsd",
@@ -322,14 +323,14 @@ class XsValBase:
             # FIXME: sometimes an URLError is catched instead of a standard IOError
             try:
                 dummy = e.errno
-            except: 
+            except:
                 raise IOError, e
-            
+
             if e.errno in (2, "socket error", "url error"): # catch IOError: No such file or directory
                 self._raiseError ("%s: '%s'" %(e.strerror, e.filename), nextSibling)
             else:
                 raise
-        
+
         return subTree
 
     ########################################
@@ -350,7 +351,7 @@ class XsValBase:
                 targetNamespace = self._getTargetNamespace(node)
                 if not lookupDict[lookupDictName].has_key((targetNamespace, node.getAttribute("name"))):
                     lookupDict[lookupDictName][(targetNamespace, node.getAttribute("name"))] = node
-        
+
         # retrieve all identity constraints
         for identConstrTagName in ("unique", "key", "keyref"):
             identConstrNodeList = rootNode.getElementsByTagNameNS (XSD_NAMESPACE, identConstrTagName)
@@ -423,7 +424,7 @@ class XsValBase:
 
     def _checkExtensionComplexContent (self, xsdParentNode, xsdNode, inputNode, inputChildIndex, usedAsBaseType, baseTypeAttributes):
         baseNsName = xsdNode.getQNameAttribute("base")
-        if usedAsBaseType == None: 
+        if usedAsBaseType == None:
             extUsedAsBaseType = "extension"
         else:
             extUsedAsBaseType = usedAsBaseType
@@ -520,7 +521,7 @@ class XsValBase:
             xsdNode["__CONTENTTYPE__"] = "string"
         self._checkElementValue (xsdNode, "__CONTENTTYPE__", inputNode)
         xsdNode.removeAttribute("__CONTENTTYPE__")
-    
+
 
     ########################################
     # validate inputNodeList against xsdNode
@@ -579,8 +580,8 @@ class XsValBase:
 
             self._checkInputElementForm (xsdNode, nameAttr, inputNode)
 
-            if (xsdNode.getFirstChild() == None and 
-                not xsdNode.hasAttribute("type") and 
+            if (xsdNode.getFirstChild() == None and
+                not xsdNode.hasAttribute("type") and
                 not inputNode.hasAttribute((XSI_NAMESPACE, "type")) ):
                 self._checkUrType(xsdNode, inputNode)
                 # ur-type => try to check children of input node
@@ -591,7 +592,7 @@ class XsValBase:
                     except TagException, errInst:
                         self._addError (errInst.errstr, errInst.node, errInst.endTag)
                 return currIndex
-            
+
             complexTypeNode = xsdNode.getFirstChildNS (self.xsdNsURI, "complexType")
             if not inputNode.hasAttribute((XSI_NAMESPACE, "type")):
                 typeNsName = xsdNode.getQNameAttribute ("type")
@@ -673,7 +674,7 @@ class XsValBase:
                 collapseString(inputNode.getElementValue()) != ""):
                 self._addError ("Element must be empty (xsi:nil='true')(3)!" , inputNode, 0)
             return retValue
-        
+
         try:
             simpleTypeReturnDict = {"BaseTypes":[], "primitiveType":None}
             fixedValueReturnDict = {"BaseTypes":[], "primitiveType":None}
@@ -692,7 +693,7 @@ class XsValBase:
                 # TODO: What to check if no type is specified for the element?
                     if fixedValue != None:
                         self.simpleTypeVal.checkSimpleType (inputNode, attrName, typeNsName, fixedValue, fixedValueReturnDict, idCheck=0)
-            
+
             xsdNode["BaseTypes"] = string.join (simpleTypeReturnDict["BaseTypes"], " ")
             xsdNode["primitiveType"] = str(simpleTypeReturnDict["primitiveType"])
 
@@ -715,7 +716,7 @@ class XsValBase:
                         self._addError ("Attribute %s must have fixed value %s!" %(repr(attrName), repr(fixedValue)), inputNode)
                     else:
                         self._addError ("Element must have fixed value %s!" %repr(fixedValue), inputNode)
-                        
+
         except SimpleTypeError, errInst:
             self._addError (errInst.args[0], inputNode)
 
@@ -900,11 +901,11 @@ class XsValBase:
         targetNamespace = self._getTargetNamespace(xsdAttrNode)
         if qAttrName[0] == targetNamespace and xsdAttrRefNode.getAttribute("form") == "unqualified":
             qAttrName = NsNameTupleFactory( (None, qAttrName[1]) )
-        
+
         use = xsdAttrNode.getAttribute("use")
         if use == None: use = xsdAttrRefNode.getAttributeOrDefault ("use", "optional")
         fixedValue = xsdAttrNode.getAttribute("fixed")
-        if fixedValue == None: 
+        if fixedValue == None:
             fixedValue = xsdAttrRefNode.getAttribute("fixed")
 
         if inputAttrDict.has_key(qAttrName):
@@ -943,7 +944,7 @@ class XsValBase:
     #
     def _updateAttributeDict (self, xsdNode, validAttrDict, checkForDuplicateAttr=0, recursionKeys=None):
         # TODO: Why can recursionKeys not be initialized by default variable??
-        if recursionKeys == None: recursionKeys = {} 
+        if recursionKeys == None: recursionKeys = {}
         validAttributeNodes = xsdNode.getChildrenNS(self.xsdNsURI, "attribute")
         for validAttrGroup in xsdNode.getChildrenNS(self.xsdNsURI, "attributeGroup"):
             refNsName = validAttrGroup.getQNameAttribute("ref")
@@ -953,7 +954,7 @@ class XsValBase:
                     continue
                 recursionKeys[refNsName] = 1
                 self._updateAttributeDict(self.xsdAttrGroupDict[refNsName], validAttrDict, checkForDuplicateAttr, recursionKeys)
-               
+
 
         for validAttributeNode in validAttributeNodes:
             if validAttributeNode.hasAttribute("ref"):
@@ -963,7 +964,7 @@ class XsValBase:
                 attrKey = validAttributeNode.getQNameAttribute("name")
                 attrKey = (self._getTargetNamespace(validAttributeNode), validAttributeNode.getAttribute("name"))
                 attributeRefNode = validAttributeNode
-                
+
             if checkForDuplicateAttr and validAttrDict.has_key(attrKey):
                 self._addError ("Duplicate attribute %s found!" %repr(attrKey), validAttributeNode)
             else:
@@ -1010,7 +1011,7 @@ class XsValBase:
 
             elif processContents == "strict":
                 self._addError ("Element definition %s not found in schema file!" %repr(inputNsName), inputNode)
-                
+
 
     ########################################
     # validate wildcard specification of anyElement/anyAttribute
@@ -1032,7 +1033,7 @@ class XsValBase:
                 self._checkAttributeTag (qAttrName, attrNode, attrNode, inputNode, inputAttrDict)
             else:
                 self._addError ("Attribute definition %s not found in schema file!" %repr(qAttrName), inputNode)
-                
+
 
     ########################################
     # validate wildcard specification of anyElement/anyAttribute
@@ -1066,7 +1067,7 @@ class XsValBase:
         identConstrNsLocalName = (self._getTargetNamespace(identityConstrNode), identConstrName)
         selectorXPathNode = identityConstrNode.getFirstChildNS (self.xsdNsURI, "selector")
         selectorNodeList, dummy, dummy = self._getXPath (inputNode, selectorXPathNode)
-        
+
         valueDict = {}
         for selectorNode in selectorNodeList:
             fieldXPathNodeList = identityConstrNode.getChildrenNS (self.xsdNsURI, "field")
@@ -1101,7 +1102,7 @@ class XsValBase:
                     else:
                         self._addError ("Identity constraint does not have a simple type!", inputChild)
                         continue
-                        
+
                     baseTypesList.append(baseTypes)
                     for baseType in baseTypes:
                         try:
@@ -1176,8 +1177,8 @@ class XsValBase:
                         if baseTypes[0] not in refBaseTypes and refBaseTypes[0] not in baseTypes:
                             if baseTypes[0] != (XSD_NAMESPACE, "anyType") and refBaseTypes[0] != (XSD_NAMESPACE, "anyType"):
                                 self._addError ("Key type and key reference type does not match (%s != %s)!" %(repr(baseTypes[0]), repr(refBaseTypes[0])), inputChild)
-                    
-    
+
+
     ########################################
     # check input element form
     #
@@ -1244,7 +1245,7 @@ class XsValBase:
                 return None
         else:
             return None
-    
+
     ########################################
     # retrieve target namespace attribute for given node
     #
@@ -1277,4 +1278,3 @@ class TagException (StandardError):
         self.errstr = errstr
         self.endTag = endTag
         StandardError.__init__(self)
-

@@ -37,6 +37,7 @@
 # OF THIS SOFTWARE.
 # --------------------------------------------------------------------
 
+from __future__ import print_function
 import string
 import os
 
@@ -55,7 +56,7 @@ class ErrorHandler:
         self.errorLimit  = errorLimit
         self.warningProc = warningProc
         self.verbose     = verbose
-        
+
         self.errorList = []
         self.noOfErrors = 0
         self.warningList = []
@@ -119,11 +120,11 @@ class ErrorHandler:
 
     def flushOutput (self):
         if self.infoDict != {}:
-            print string.join (self.infoDict.keys(), "\n")
+            print(string.join (self.infoDict.keys(), "\n"))
             self.infoList = []
 
         if self.warningProc == PRINT_WARNINGS and self.warningList != []:
-            print self._assembleOutputList(self.warningList, sorted=1)
+            print(self._assembleOutputList(self.warningList, sorted=1))
             self.warningList = []
         elif self.warningProc == STOP_ON_WARNINGS:
             self.errorList.extend (self.warningList)
@@ -148,8 +149,8 @@ class ErrorHandler:
         for outElement in outputList:
             outputStrList.append (self._assembleOutString(outElement))
         return string.join (outputStrList, "\n")
-        
-        
+
+
     def _assembleOutString (self, listElement):
         fileStr = ""
         lineStr = ""
@@ -161,8 +162,7 @@ class ErrorHandler:
         if listElement[1] != 0:
             lineStr = "line %d: " %(listElement[1])
         return "%s: %s%s%s" %(listElement[2], fileStr, lineStr, listElement[3])
-    
+
 
 class XsvalError (StandardError):
     pass
-

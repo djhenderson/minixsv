@@ -6,7 +6,7 @@
 #
 # history:
 # 2005-04-25 rl   created
-# 2007-07-02 rl   complete re-design, internal wrapper 
+# 2007-07-02 rl   complete re-design, internal wrapper
 #                 for DOM trees and elements introduced
 # 2008-07-01 rl   Limited support of XInclude added
 # 2015-04-08 rl   Bugfix for handling of wellknown namespaces
@@ -41,6 +41,7 @@
 # OF THIS SOFTWARE.
 # --------------------------------------------------------------------
 
+from __future__           import print_function
 import string
 import urllib
 from xml.dom              import Node, XMLNS_NAMESPACE
@@ -53,7 +54,7 @@ from xmlifDom             import XmlInterfaceDom, InternalDomTreeWrapper, Intern
 
 class XmlInterfaceMinidom (XmlInterfaceDom):
     """Derived interface class for handling of minidom parser.
-    
+
     For description of the interface methods see xmlifbase.py.
     """
 
@@ -61,7 +62,7 @@ class XmlInterfaceMinidom (XmlInterfaceDom):
         XmlInterfaceDom.__init__ (self, verbose, useCaching, processXInclude)
         self.xmlIfType = XMLIF_MINIDOM
         if self.verbose:
-            print "Using minidom interface module..."
+            print("Using minidom interface module...")
 
 
     def createXmlTree (self, namespace, xmlRootTagName, attributeDict={}, publicId=None, systemId=None):
@@ -88,7 +89,7 @@ class XmlInterfaceMinidom (XmlInterfaceDom):
 
             # XInclude support
             if self.processXInclude:
-                if internalOwnerDoc == None: 
+                if internalOwnerDoc == None:
                     internalOwnerDoc = builder.treeWrapper.getTree()
                 self.xInclude (builder.treeWrapper.getRootNode(), absUrl, internalOwnerDoc)
 
@@ -108,7 +109,7 @@ class XmlInterfaceMinidom (XmlInterfaceDom):
 
             # XInclude support
             if self.processXInclude:
-                if internalOwnerDoc == None: 
+                if internalOwnerDoc == None:
                     internalOwnerDoc = builder.treeWrapper.getTree()
                 self.xInclude (builder.treeWrapper.getRootNode(), absUrl, internalOwnerDoc)
         except ExpatError, errInst:
@@ -121,7 +122,7 @@ class XmlInterfaceMinidom (XmlInterfaceDom):
 class InternalMinidomTreeWrapper (InternalDomTreeWrapper):
     """Internal wrapper for a minidom Document class.
     """
-    
+
     def __init__ (self, document):
         InternalDomTreeWrapper.__init__(self, document)
         self.internalElementWrapperClass = InternalMinidomElementWrapper
@@ -137,15 +138,15 @@ class InternalMinidomElementWrapper (InternalDomElementWrapper):
         attribDict = {}
         for attrNameNS, attrNodeOrValue in self.element.attributes.itemsNS():
             attribDict[NsNameTupleFactory(attrNameNS)] = attrNodeOrValue
-                
+
         return attribDict
 
 
 
 class ExtExpatBuilderNS (ExpatBuilderNS, XmlIfBuilderExtensionDom):
     """Extended Expat Builder class derived from ExpatBuilderNS.
-    
-    Extended to store related line numbers, file/URL names and 
+
+    Extended to store related line numbers, file/URL names and
     defined namespaces in the node object.
     """
 
@@ -171,7 +172,7 @@ class ExtExpatBuilderNS (ExpatBuilderNS, XmlIfBuilderExtensionDom):
             if len(attrNameSplit) > 1:
                 attrName = (attrNameSplit[0], attrNameSplit[1])
             attrList.extend([attrName, attributes[i+1]])
-        
+
         internalMinidomElementWrapper = InternalMinidomElementWrapper(self.curNode, self.treeWrapper.getTree())
         XmlIfBuilderExtensionDom.startElementHandler (self, internalMinidomElementWrapper, self.getParser().ErrorLineNumber, self.namespaces[:], attrList)
 
@@ -193,4 +194,3 @@ class ExtExpatBuilderNS (ExpatBuilderNS, XmlIfBuilderExtensionDom):
 
     def end_namespace_decl_handler(self, prefix):
         assert self.namespaces.pop(0)[0] == prefix, "implementation confused"
-
