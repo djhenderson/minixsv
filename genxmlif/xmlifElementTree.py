@@ -97,15 +97,15 @@ class XmlInterfaceElementTree (XmlInterfaceBase):
                 loaderInst = ExtXIncludeLoader (self.parse, absUrl, ownerDoc)
                 try:
                     ElementInclude.include(treeWrapper.getTree().getroot(), loaderInst.loader)
-                except IOError, errInst:
-                    raise GenXmlIfError, "%s: IOError: %s" %(file, str(errInst))
+                except IOError as errInst:
+                    raise GenXmlIfError("%s: IOError: %s" %(file, str(errInst)))
 
-        except ExpatError, errstr:
+        except ExpatError as errstr:
             fp.close()
-            raise GenXmlIfError, "%s: ExpatError: %s" %(file, str(errstr))
-        except ElementInclude.FatalIncludeError, errInst:
+            raise GenXmlIfError("%s: ExpatError: %s" %(file, str(errstr)))
+        except ElementInclude.FatalIncludeError as errInst:
             fp.close()
-            raise GenXmlIfError, "%s: XIncludeError: %s" %(file, str(errInst))
+            raise GenXmlIfError("%s: XIncludeError: %s" %(file, str(errInst)))
 
         return treeWrapper
 

@@ -83,9 +83,9 @@ class XmlInterface4Dom (XmlInterfaceDom):
         try:
             tree = reader.fromStream(fp, ownerDoc)
             fp.close()
-        except SAXParseException, errInst:
+        except SAXParseException as errInst:
             fp.close()
-            raise GenXmlIfError, "%s: SAXParseException: %s" %(file, str(errInst))
+            raise GenXmlIfError("%s: SAXParseException: %s" %(file, str(errInst)))
 
         treeWrapper = reader.handler.treeWrapper
 

@@ -373,7 +373,7 @@ class XmlElementWrapper:
         if attrValue != None:
             return attrValue
         else:
-            raise AttributeError, "Attribute %s not found!" %(repr(tupleOrAttrName))
+            raise AttributeError("Attribute %s not found!" %(repr(tupleOrAttrName)))
 
 
     def __setitem__(self, tupleOrAttrName, attributeValue):
@@ -876,7 +876,7 @@ class XmlElementWrapper:
             attributeValue:   attribute value to be set
         """
         if not isinstance(attributeValue, StringTypes):
-            raise TypeError, "%s (attribute %s) must be a string!" %(repr(attributeValue), repr(tupleOrAttrName))
+            raise TypeError("%s (attribute %s) must be a string!" %(repr(attributeValue), repr(tupleOrAttrName)))
 
         nsNameAttrName = NsNameTupleFactory(tupleOrAttrName)
         if nsNameAttrName not in self.attributeSequence:
@@ -1069,7 +1069,7 @@ class XmlElementWrapper:
                 if qNamePrefix == None:
                     nsName = (EMPTY_NAMESPACE, qNameLocalName)
                 else:
-                    raise ValueError, "Namespace prefix '%s' not bound to a namespace!" % (qNamePrefix)
+                    raise ValueError("Namespace prefix '%s' not bound to a namespace!" % (qNamePrefix)
         else:
             nsName = (None, None)
         return NsNameTupleFactory(nsName)
@@ -1104,7 +1104,7 @@ class XmlElementWrapper:
                 if qNamePrefix == None:
                     namespace = EMPTY_NAMESPACE
                 else:
-                    raise LookupError, "Namespace for QName '%s' not found!" % (qName)
+                    raise LookupError("Namespace for QName '%s' not found!" % (qName))
         else:
             namespace = EMPTY_NAMESPACE
         return namespace
@@ -1125,7 +1125,7 @@ class XmlElementWrapper:
             if ns == None:
                 return None
             else:
-                raise LookupError, "Prefix for namespaceURI '%s' not found!" % (ns)
+                raise LookupError("Prefix for namespaceURI '%s' not found!" % (ns))
 
 
 #++++++++++++ limited XPath support ++++++++++++++++++++

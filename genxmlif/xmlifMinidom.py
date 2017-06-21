@@ -94,9 +94,9 @@ class XmlInterfaceMinidom (XmlInterfaceDom):
                 self.xInclude (builder.treeWrapper.getRootNode(), absUrl, internalOwnerDoc)
 
             fp.close()
-        except ExpatError, errInst:
+        except ExpatError as errInst:
             fp.close()
-            raise GenXmlIfError, "%s: ExpatError: %s" %(file, str(errInst))
+            raise GenXmlIfError("%s: ExpatError: %s" %(file, str(errInst)))
 
         return builder.treeWrapper
 
@@ -112,8 +112,8 @@ class XmlInterfaceMinidom (XmlInterfaceDom):
                 if internalOwnerDoc == None:
                     internalOwnerDoc = builder.treeWrapper.getTree()
                 self.xInclude (builder.treeWrapper.getRootNode(), absUrl, internalOwnerDoc)
-        except ExpatError, errInst:
-            raise GenXmlIfError, "%s: ExpatError: %s" %(baseUrl, str(errInst))
+        except ExpatError as errInst:
+            raise GenXmlIfError("%s: ExpatError: %s" %(baseUrl, str(errInst)))
 
         return builder.treeWrapper
 

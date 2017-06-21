@@ -91,7 +91,7 @@ def addUserSpecXmlIfClass (xmlIfKey, factory):
     if not _xmlIfDict.has_key(xmlIfKey):
         _xmlIfDict[xmlIfKey] = factory
     else:
-        raise KeyError, "xmlIfKey %s already implemented!" %(xmlIfKey)
+        raise KeyError("xmlIfKey %s already implemented!" %(xmlIfKey))
 
 
 ########################################
@@ -305,7 +305,7 @@ class XsValidator:
         for namespace, xsdFile in xsdFileList:
             try:
                 xsdTreeWrapper = self.parse (xsdFile, inputTreeWrapper.getRootNode().getAbsUrl())
-            except IOError, e:
+            except IOError as e:
                 if e.errno == 2: # catch IOError: No such file or directory
                     self.errorHandler.raiseError ("XML schema file %s not found!" %(xsdFile), inputTreeWrapper.getRootNode())
                 else:

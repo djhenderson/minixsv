@@ -133,7 +133,7 @@ class XsValBase:
             # start recursive schema validation
             try:
                 self._checkElementTag (self.xsdElementDict[inputRootNsName], self.inputRoot, (self.inputRoot,), 0)
-            except TagException, errInst:
+            except TagException as errInst:
                 self._addError (errInst.errstr, errInst.node, errInst.endTag)
 
             if not self.errorHandler.hasErrors():
@@ -317,14 +317,14 @@ class XsValBase:
         try:
             subTree = self.xmlIf.parse (includeUrl, baseUrl, baseTree.getTree())
             self._initInternalAttributes (subTree.getRootNode())
-        except IOError, errInst:
+        except IOError as errInst:
             self._raiseError ("%s" %str(errInst), nextSibling)
-        except SyntaxError, e:
+        except SyntaxError as e:
             # FIXME: sometimes an URLError is catched instead of a standard IOError
             try:
                 dummy = e.errno
             except:
-                raise IOError, e
+                raise IOError(e)
 
             if e.errno in (2, "socket error", "url error"): # catch IOError: No such file or directory
                 self._raiseError ("%s: '%s'" %(e.strerror, e.filename), nextSibling)
@@ -402,7 +402,7 @@ class XsValBase:
             if restrictionNode != None:
                 inputChildIndex, baseTypeAttributes = self._checkRestrictionComplexContent (xsdParentNode, restrictionNode, inputNode, inputChildIndex, usedAsBaseType, baseTypeAttributes)
             else:
-                raise AttributeError, "RestrictionNode not found!"
+                raise AttributeError("RestrictionNode not found!")
 
 #        if usedAsBaseType == None:
 #            self._checkMixed (xsdNode, inputNode)
@@ -454,7 +454,7 @@ class XsValBase:
             simpleTypeReturnDict = {"BaseTypes":[], "primitiveType":None}
             self.simpleTypeVal.checkSimpleTypeDef (inputNode, simpleContentNode, inputNode.getTagName(), inputNode.getElementValue(), simpleTypeReturnDict, idCheck=1)
             xsdNode["BaseTypes"] = string.join (simpleTypeReturnDict["BaseTypes"], " ")
-        except SimpleTypeError, errInst:
+        except SimpleTypeError as errInst:
             self._addError (errInst.args[0], inputNode)
 
         inputChildIndex, baseTypeAttributes = self._checkSimpleTypeContent (xsdParentNode, xsdNode, inputNode, inputChildIndex, usedAsBaseType, baseTypeAttributes)
@@ -542,7 +542,7 @@ class XsValBase:
                     currIndex = newIndex
                 else:
                     break # no suitable element found
-            except TagException, errInst:
+            except TagException as errInst:
                 break
 
         if occurs == 0 and minOccurs > 0:
@@ -589,7 +589,7 @@ class XsValBase:
                     try:
                         if self.xsdElementDict.has_key(inputChild.getNsName()):
                             self._checkElementTag (self.xsdElementDict[inputChild.getNsName()], inputNode, (inputChild,), 0)
-                    except TagException, errInst:
+                    except TagException as errInst:
                         self._addError (errInst.errstr, errInst.node, errInst.endTag)
                 return currIndex
 
@@ -612,7 +612,7 @@ class XsValBase:
             if complexTypeNode != None:
                 try:
                     self._checkComplexTypeTag (xsdNode, complexTypeNode, inputNode, 0)
-                except TagException, errInst:
+                except TagException as errInst:
                     self._addError (errInst.errstr, errInst.node, errInst.endTag)
                     return currIndex
             else:
@@ -717,7 +717,7 @@ class XsValBase:
                     else:
                         self._addError ("Element must have fixed value %s!" %repr(fixedValue), inputNode)
 
-        except SimpleTypeError, errInst:
+        except SimpleTypeError as errInst:
             self._addError (errInst.args[0], inputNode)
 
         return retValue
@@ -746,7 +746,7 @@ class XsValBase:
                     break
                 else:
                     exceptionRaised = 0
-            except TagException, errInst:
+            except TagException as errInst:
                 exceptionRaised = 1
         else:
             if not childFound and exceptionRaised:
@@ -790,7 +790,7 @@ class XsValBase:
                     newIndex = self._checkParticle (xsdChildNode, inputParentNode, inputNodeList, currIndex)
                     if newIndex == currIndex:
                         continue
-                except TagException, errInst:
+                except TagException as errInst:
                     continue
 
                 if xsdChildDict[xsdChildNode] == 0:
@@ -997,13 +997,13 @@ class XsValBase:
                     if typeType == "complexType":
                         try:
                             self._checkComplexTypeTag (None, self.xsdTypeDict[typeNsName], inputNode, 0)
-                        except TagException, errInst:
+                        except TagException as errInst:
                             self._addError (errInst.errstr, errInst.node, errInst.endTag)
                     else:
                         simpleTypeReturnDict = {"BaseTypes":[], "primitiveType":None}
                         try:
                             self.simpleTypeVal.checkSimpleType (inputNode, inputNode.getLocalName(), typeNsName, inputNode.getElementValue(), simpleTypeReturnDict, idCheck=1)
-                        except SimpleTypeError, errInst:
+                        except SimpleTypeError as errInst:
                             self._addError (errInst.args[0], inputNode)
 
             elif self.xsdElementDict.has_key(inputNsName):
@@ -1108,7 +1108,7 @@ class XsValBase:
                         try:
                             value = self._getOrderedValue (inputChild, attrName, baseType, value)
                             break
-                        except SimpleTypeError, errInst:
+                        except SimpleTypeError as errInst:
                             pass
                     keyValue.append (value)
 
@@ -1156,7 +1156,7 @@ class XsValBase:
                             try:
                                 value = self._getOrderedValue (inputChild, attrName, baseType, value)
                                 break
-                            except SimpleTypeError, errInst:
+                            except SimpleTypeError as errInst:
                                 pass
                     keyValue.append (value)
 
@@ -1218,7 +1218,7 @@ class XsValBase:
         try:
             attrIgnoreList = [(XSI_NAMESPACE, "nil")]
             childList, attrNodeList, attrName = node.getXPathList (xPath, namespaceRef=xPathNode, useDefaultNs=0, attrIgnoreList=attrIgnoreList)
-        except Exception, errInst:
+        except Exception as errInst:
             self._addError (errInst.args, node)
             childList = []
             attrNodeList = []

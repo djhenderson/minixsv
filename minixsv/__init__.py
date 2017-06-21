@@ -62,7 +62,7 @@ XSD_NAMESPACE   = "http://www.w3.org/2001/XMLSchema"
 XSI_NAMESPACE   = "http://www.w3.org/2001/XMLSchema-instance"
 
 
-# definition of minixsv path 
+# definition of minixsv path
 
 import os
 MINIXSV_DIR = os.path.dirname(__file__)
@@ -72,4 +72,3 @@ MINIXSV_DIR = os.path.dirname(__file__)
 
 from xsvalErrorHandler import IGNORE_WARNINGS, PRINT_WARNINGS, STOP_ON_WARNINGS
 from xsvalErrorHandler import XsvalError
-

@@ -85,7 +85,7 @@ def collapseString (strValue, lstrip=1, rstrip=1):
         return collStr.rstrip()
     else:
         return collStr
-        
+
 
 
 ########################################
@@ -105,7 +105,7 @@ def processWhitespaceAction (strValue, wsAction, lstrip=1, rstrip=1):
         return normalizeString(strValue)
     else:
         return strValue
-    
+
 
 ##########################################################
 #  convert input parameter 'fileOrUrl' into a valid URL
@@ -153,7 +153,7 @@ def convertToAbsUrl (fileOrUrl, baseUrl):
                 absUrl = urlparse.urljoin (baseUrl, fileOrUrl)
             else:
                 absUrl = fileOrUrl
-#                raise IOError, "File %s not found!" %(fileOrUrl)
+#                raise IOError("File %s not found!" %(fileOrUrl))
     return absUrl
 
 
@@ -173,7 +173,7 @@ def normalizeFilter (filterVar):
 
 def nsNameToQName (nsLocalName, curNs):
     """Convert a tuple '(namespace, localName)' to a string 'prefix:localName'
-    
+
     Input parameter:
         nsLocalName:   tuple '(namespace, localName)' to be converted
         curNs:         list of current namespaces
@@ -190,7 +190,7 @@ def nsNameToQName (nsLocalName, curNs):
         if ns == None:
             return nsLocalName[1]
         else:
-            raise LookupError, "Prefix for namespaceURI '%s' not found!" % (ns)
+            raise LookupError("Prefix for namespaceURI '%s' not found!" % (ns))
 
 
 def splitQName (qName):
@@ -230,8 +230,8 @@ def toClarkQName (tupleOrLocalName):
             return tupleOrLocalName[1]
     else:
         return tupleOrLocalName
-    
-    
+
+
 def splitClarkQName (qName):
     """converts clark notation {namespace}localName into a tuple (namespace, localName)
 
@@ -247,8 +247,8 @@ def splitClarkQName (qName):
         prefix     = None
         localName  = qName
     return prefix, localName
-    
-    
+
+
 ##################################################################
 # XML serialization of text
 # the following functions assume an ascii-compatible encoding
@@ -339,7 +339,7 @@ class QNameTuple(tuple):
             return "%s:%s" %(self[0],self[1])
         else:
             return self[1]
-    
+
 
 def QNameTupleFactory(initValue):
     if isinstance(initValue, StringTypes):
@@ -370,5 +370,3 @@ def NsNameTupleFactory(initValue):
     elif initValue == None:
         initValue = (EMPTY_NAMESPACE, initValue)
     return NsNameTuple(initValue)
-
-

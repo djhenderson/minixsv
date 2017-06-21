@@ -83,11 +83,11 @@ class XmlInterfaceDom (XmlInterfaceBase):
                         elementWrapper.removeChild (childElementWrapper)
                         fp.close()
                     else:
-                        raise GenXmlIfError, "%s: line %s: XIncludeError: Invalid 'parse' Attribut: '%s'" %(filePath, line, parse)
-                except IOError, errInst:
-                    raise GenXmlIfError, "%s: line %s: IOError: %s" %(filePath, line, str(errInst))
+                        raise GenXmlIfError("%s: line %s: XIncludeError: Invalid 'parse' Attribut: '%s'" %(filePath, line, parse))
+                except IOError as errInst:
+                    raise GenXmlIfError("%s: line %s: IOError: %s" %(filePath, line, str(errInst)))
             elif childElementWrapper.getNsName() == (XINC_NAMESPACE, "fallback"):
-                raise GenXmlIfError, "%s: line %s: XIncludeError: xi:fallback tag must be child of xi:include" %(filePath, line)
+                raise GenXmlIfError("%s: line %s: XIncludeError: xi:fallback tag must be child of xi:include" %(filePath, line))
             else:
                 self.xInclude(childElementWrapper, baseUrl, ownerDoc)
 

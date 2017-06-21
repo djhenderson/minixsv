@@ -54,7 +54,7 @@ XMLIF_ELEMENTTREE = "XMLIF_ELEMENTTREE"
 XINC_NAMESPACE  = "http://www.w3.org/2001/XInclude"
 
 
-# definition of genxmlif path 
+# definition of genxmlif path
 
 import os
 GENXMLIF_DIR = os.path.dirname(__file__)
@@ -78,7 +78,7 @@ def chooseXmlIf (xmlIf, verbose=0, useCaching=1, processXInclude=1):
         return xmlifElementTree.XmlInterfaceElementTree(verbose, useCaching, processXInclude)
 
     else:
-        raise AttributeError, "Unknown XML interface: %s" %(xmlIf)
+        raise AttributeError("Unknown XML interface: %s" %(xmlIf))
 
 
 ########################################
@@ -89,4 +89,3 @@ def chooseXmlIf (xmlIf, verbose=0, useCaching=1, processXInclude=1):
 #
 class GenXmlIfError (StandardError):
     pass
-

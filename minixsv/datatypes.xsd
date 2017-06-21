@@ -425,7 +425,7 @@
         id="hexBinary.whiteSpace"/>
     </xs:restriction>
    </xs:simpleType>
- 
+
  <xs:simpleType name="base64Binary" id="base64Binary" facetType="xs:base64Binary">
     <xs:annotation>
       <xs:appinfo>
@@ -474,7 +474,7 @@
     </xs:restriction>
    </xs:simpleType>
 
-  <xs:simpleType name="QName" id="QName" facetType="xs:QName"> 
+  <xs:simpleType name="QName" id="QName" facetType="xs:QName">
     <xs:annotation>
         <xs:appinfo>
         <hfp:hasFacet name="length"/>
@@ -545,7 +545,7 @@
         id="normalizedString.whiteSpace"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:simpleType name="token" id="token" facetType="xs:string">
     <xs:annotation>
       <xs:documentation
@@ -555,7 +555,7 @@
       <xs:whiteSpace value="collapse" id="token.whiteSpace"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:simpleType name="language" id="language" facetType="xs:string">
     <xs:annotation>
       <xs:documentation
@@ -597,7 +597,7 @@
     </xs:annotation>
     <xs:restriction>
       <xs:simpleType>
-        <xs:list itemType="xs:IDREF"/>    
+        <xs:list itemType="xs:IDREF"/>
       </xs:simpleType>
         <xs:minLength value="1" id="IDREFS.minLength"/>
     </xs:restriction>
@@ -909,7 +909,7 @@
    A utility type, not for public use</xs:documentation>
   </xs:annotation>
   <xs:union>
-   <xs:simpleType>    
+   <xs:simpleType>
     <xs:restriction base="xs:token">
      <xs:enumeration value="#all"/>
     </xs:restriction>
@@ -954,7 +954,7 @@
               Required at the top level
             </xs:documentation>
           </xs:annotation>
-        </xs:attribute>   
+        </xs:attribute>
       </xs:restriction>
     </xs:complexContent>
   </xs:complexType>
@@ -972,7 +972,7 @@
               Forbidden when nested
             </xs:documentation>
           </xs:annotation>
-        </xs:attribute>   
+        </xs:attribute>
         <xs:attribute name="final" use="prohibited"/>
       </xs:restriction>
     </xs:complexContent>
@@ -1079,7 +1079,7 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  
+
   <xs:complexType name="facet">
     <xs:complexContent>
       <xs:extension base="xs:annotated">
@@ -1089,7 +1089,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
- 
+
  <xs:complexType name="noFixedFacet">
   <xs:complexContent>
    <xs:restriction base="xs:facet">
@@ -1179,7 +1179,7 @@
         source="http://www.w3.org/TR/xmlschema-2/#element-maxLength"/>
     </xs:annotation>
   </xs:element>
-  
+
   <xs:element name="enumeration" id="enumeration" type="xs:noFixedFacet">
     <xs:annotation>
       <xs:documentation

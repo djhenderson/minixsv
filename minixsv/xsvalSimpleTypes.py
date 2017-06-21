@@ -63,7 +63,7 @@ class XsSimpleTypeVal:
 
     def unlink (self):
         self.parent = None
-        
+
 
     ########################################
     # validate given value against simpleType
@@ -75,7 +75,7 @@ class XsSimpleTypeVal:
             try:
                 _suppBaseTypeDict[typeName] (inputNode, typeName, attributeValue, returnDict)
                 returnDict["primitiveType"] = typeName
-            except BaseTypeError, errstr:
+            except BaseTypeError as errstr:
                 raise SimpleTypeError("Value of %s (%s) %s" %(repr(attrName), repr(attributeValue), errstr))
 
         elif self.parent.xsdTypeDict.has_key(typeName):
@@ -89,7 +89,7 @@ class XsSimpleTypeVal:
                 self.checkSimpleType (inputNode, attrName, (XSD_NAMESPACE, "string"), attributeValue, returnDict, idCheck)
             elif typeName != (XSD_NAMESPACE, "anyType"):
                 raise SimpleTypeError("Attribute %s requires a simple type!" %repr(attrName))
-            
+
             if idCheck:
                 adaptedAttrValue = returnDict["adaptedAttrValue"]
                 if typeName == (XSD_NAMESPACE, "ID"):
@@ -133,8 +133,8 @@ class XsSimpleTypeVal:
         else:
             baseTypeNode = xsdElement.getFirstChildNS(self.xsdNsURI, "simpleType")
             self.checkSimpleTypeDef (inputNode, baseTypeNode, attrName, attributeValue, returnDict, idCheck)
-    
-    
+
+
     ########################################
     # validate given value against restriction node
     #
@@ -249,13 +249,13 @@ class XsSimpleTypeVal:
                     enumValue = enumReturnDict["orderedValue"]
                 elif enumReturnDict.has_key("adaptedAttrValue"):
                     enumValue = enumReturnDict["adaptedAttrValue"]
-                
+
                 if enumValue == attributeValue:
                     break
             else:
                 raise SimpleTypeError ("Enumeration value %s not allowed!" %repr(attributeValue))
 
-        
+
         if returnDict.has_key("adaptedAttrValue"):
             attributeValue = returnDict["adaptedAttrValue"]
 
@@ -266,15 +266,15 @@ class XsSimpleTypeVal:
             intRePattern = rePattern
             try:
                 intRePattern = substituteSpecialEscChars (intRePattern)
-            except SyntaxError, errInst:
-                raise SimpleTypeError, str(errInst)
+            except SyntaxError as errInst:
+                raise SimpleTypeError(str(errInst))
             patternMatch = self._matchesPattern (intRePattern, attributeValue)
 
             if patternMatch:
                 break
             else:
                 notMatchedPatternList.append(rePattern)
-        
+
         if not patternMatch:
             try:
                 pattern = " nor ".join(notMatchedPatternList)
@@ -344,7 +344,7 @@ class XsSimpleTypeVal:
                 try:
                     self.checkSimpleType (inputNode, attrName, xsdElement.qName2NsName(memberType, useDefaultNs=1), attributeValue, returnDict, idCheck)
                     return
-                except SimpleTypeError, errstr:
+                except SimpleTypeError as errstr:
                     pass
 
         # memberTypes and additional type definitions is legal!
@@ -352,7 +352,7 @@ class XsSimpleTypeVal:
             try:
                 self.checkSimpleTypeDef (inputNode, childSimpleType, attrName, attributeValue, returnDict, idCheck)
                 return
-            except SimpleTypeError, errstr:
+            except SimpleTypeError as errstr:
                 pass
 
         raise SimpleTypeError ("%s (%s) is no valid union member type!" %(repr(attrName), repr(attributeValue)))
@@ -481,7 +481,7 @@ def _checkQNameType (inputNode, simpleType, attributeValue, returnDict):
     regexObj = reQName.match(attributeValue)
     if not regexObj or regexObj.end() != len(attributeValue):
         raise BaseTypeError("is not a QName!")
-    
+
     try:
         inputNode.getNamespace(attributeValue)
     except LookupError:
@@ -518,12 +518,12 @@ def _checkDurationType (inputNode, simpleType, attributeValue, returnDict):
         microseconds = int(Decimal(sign + regexObj.group("fracsec")) * 1000000)
     try:
         timeDeltaObj = datetime.timedelta(days=days, seconds=seconds, microseconds=microseconds)
-    except ValueError, errstr:
+    except ValueError as errstr:
         raise BaseTypeError("is invalid (%s)!" %(errstr))
     returnDict["orderedValue"] = timeDeltaObj
     returnDict["adaptedAttrValue"] = attributeValue
     returnDict["wsAction"] = "collapse"
-    
+
 def _checkDateTimeType (inputNode, simpleType, attributeValue, returnDict):
     attributeValue = collapseString(attributeValue)
     regexObj = reDateTime.match(attributeValue)
@@ -539,12 +539,12 @@ def _checkDateTimeType (inputNode, simpleType, attributeValue, returnDict):
             tz = None
         dtObj = datetime.datetime(int(date[0:4]),int(date[5:7]),int(date[8:10]),
                                   int(time[0:2]),int(time[3:5]),int(time[6:8]), 0, tz)
-    except ValueError, errstr:
+    except ValueError as errstr:
         raise BaseTypeError("is invalid (%s)!" %(errstr))
     returnDict["orderedValue"] = dtObj
     returnDict["adaptedAttrValue"] = attributeValue
     returnDict["wsAction"] = "collapse"
-    
+
 def _checkDateType (inputNode, simpleType, attributeValue, returnDict):
     attributeValue = collapseString(attributeValue)
     regexObj = reDate.match(attributeValue)
@@ -552,12 +552,12 @@ def _checkDateType (inputNode, simpleType, attributeValue, returnDict):
         raise BaseTypeError("is not a date value!")
     try:
         dateObj = datetime.date(int(attributeValue[0:4]),int(attributeValue[5:7]),int(attributeValue[8:10]))
-    except ValueError, errstr:
+    except ValueError as errstr:
         raise BaseTypeError("is invalid (%s)!" %(errstr))
     returnDict["orderedValue"] = dateObj
     returnDict["adaptedAttrValue"] = attributeValue
     returnDict["wsAction"] = "collapse"
-    
+
 def _checkTimeType (inputNode, simpleType, attributeValue, returnDict):
     attributeValue = collapseString(attributeValue)
     regexObj = reTime.match(attributeValue)
@@ -576,12 +576,12 @@ def _checkTimeType (inputNode, simpleType, attributeValue, returnDict):
         else:
             fracSec = 0
         timeObj = datetime.time(int(time[0:2]),int(time[3:5]),int(time[6:8]), fracSec, tz)
-    except ValueError, errstr:
+    except ValueError as errstr:
         raise BaseTypeError("is invalid (%s)!" %(errstr))
     returnDict["orderedValue"] = timeObj
     returnDict["adaptedAttrValue"] = attributeValue
     returnDict["wsAction"] = "collapse"
-    
+
 def _checkYearMonth (inputNode, simpleType, attributeValue, returnDict):
     attributeValue = collapseString(attributeValue)
     regexObj = reYearMonth.match(attributeValue)
@@ -589,7 +589,7 @@ def _checkYearMonth (inputNode, simpleType, attributeValue, returnDict):
         raise BaseTypeError("is not a gYearMonth value!")
     try:
         dateObj = datetime.date(int(attributeValue[0:4]),int(attributeValue[5:7]),1)
-    except ValueError, errstr:
+    except ValueError as errstr:
         raise BaseTypeError("is invalid (%s)!" %(errstr))
     returnDict["orderedValue"] = dateObj
     returnDict["adaptedAttrValue"] = attributeValue
@@ -602,12 +602,12 @@ def _checkMonthDay (inputNode, simpleType, attributeValue, returnDict):
         raise BaseTypeError("is not a gMonthDay value!")
     try:
         dateObj = datetime.date(2004, int(attributeValue[2:4]),int(attributeValue[5:7]))
-    except ValueError, errstr:
+    except ValueError as errstr:
         raise BaseTypeError("is invalid (%s)!" %(errstr))
     returnDict["orderedValue"] = dateObj
     returnDict["adaptedAttrValue"] = attributeValue
     returnDict["wsAction"] = "collapse"
-    
+
 def _checkYear (inputNode, simpleType, attributeValue, returnDict):
     attributeValue = collapseString(attributeValue)
     regexObj = reYear.match(attributeValue)
@@ -655,7 +655,7 @@ class TimezoneFixedOffset(datetime.tzinfo):
         if offset == "Z":
             self.__offset = datetime.timedelta(0)
         else:
-            self.__offset = datetime.timedelta(hours=int(offset[0:3]), 
+            self.__offset = datetime.timedelta(hours=int(offset[0:3]),
                                                minutes=int(offset[0] + offset[4:5]))
 
     def utcoffset(self, dt):
@@ -701,4 +701,3 @@ _suppBaseTypeDict = {(XSD_NAMESPACE, "anySimpleType"):    _checkAnySimpleType,
                      (XSD_NAMESPACE, "gMonth"):           _checkMonth,
                      (XSD_NAMESPACE, "gDay"):             _checkDay,
                     }
-

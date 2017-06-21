@@ -41,7 +41,7 @@ class odict(UserDict):
         return (key, val)
 
     def setdefault(self, key, failobj = None):
-        if key not in self._keys: 
+        if key not in self._keys:
             self._keys.append(key)
         return UserDict.setdefault(self, key, failobj)
 

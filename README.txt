@@ -10,7 +10,7 @@ minixsv is based on genxmlif, a generic XML interface class,
 which currently supports minidom, elementtree or 4DOM/pyXML as XML parser
 Other parsers can be adapted by implementing an appropriate derived interface class
 
-Using the 4DOM interface is rather slow. 
+Using the 4DOM interface is rather slow.
 For best performance the elementtree parser should be used!
 
 After successful validation minixsv provides the input XML tree with the following changes:
@@ -94,15 +94,15 @@ Changes for Release 0.9.1
 =========================
 
 - New version of genxmlif (0.9.1) included
-  
+
 
 Changes for Release 0.9.0
 =========================
 
-- Caution, Interface changed! 
+- Caution, Interface changed!
   * In case of parser and XInclude errors now a GenXmlIfError exception is raised!
   * New optional parameter 'useCaching=1' and 'processXInclude=1' to XsValidator class added
-  
+
 - check of facets of derived primitive types added
 - unicode support added (except wide unicode characters)
 - major improvements for pattern matching (but there are still some restrictions, refer above)
@@ -118,11 +118,11 @@ Changes for Release 0.9.0
 Changes for Release 0.8
 =======================
 
-- Caution, Interface changed! 
+- Caution, Interface changed!
   When calling the validator (e.g. using parseAndValidate or parseAndValidateString)
   the input parameter xsdFile/xsdText is only used if no schema file is specified in the XML input file/string,
   i.e. the schema specification in the XML input file/string has now priority!!
-  
+
 - uniqueness of attribute/attributeGroup/type IDs now checked
 - problems with different target namespaces fixed
 - "redefine" element now supported
@@ -146,7 +146,7 @@ Changes for Release 0.7
   3996 of 4529 msxsdtest testgroups passed
     27 of   40 suntest   testgroups passed
   (most not passed test groups correspond to the limitations listed above)
-  
+
 
 Changes for Release 0.5
 =======================
@@ -180,5 +180,3 @@ Changes for Release 0.2
 - Basic URI support for include directive added
 - XML interface classes completely re-designed
 - several bugs fixed
-
-
